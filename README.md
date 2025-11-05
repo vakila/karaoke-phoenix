@@ -10,16 +10,28 @@
 - Mobile-friendly
 - Sessions
   - Start a session -> whichever client started now is "admin" of the session (e.g. projector laptop)
-  - Join a given session with a code
-- No DB! All in Memory! 
+  - Participants can Join a given session with a code
+  - Admin can only play songs, not delete them
+- When session ends, automatically open "Closing Time" song lol
+
+Arch:
+- No DB! All in Memory!
+- Session data stored in a GenServer
+- Everyone connects to the same GenServer
+- Use process registry to map session codes to PIDs
+
+Pages:
+- / -> Start/join session (static)
+- /sessions/ABCD -> Queue for Session ABCD (live view)
+
 
 ### V1
 
 - Uses RC Oauth & gets names from there
 - Finds & suggests videos based on song name/artist
-- Embed YouTube videos
-- No queuing multiple songs at once for the same person
-- Persist to database
+- Embed YouTube videos instead of linking
+- More fine-grained access control (e.g. Can only delete your own songs from the queue, No queuing multiple songs at once for the same person)
+- Persist to database?
 
 ## Development
 
