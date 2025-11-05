@@ -18,7 +18,15 @@ defmodule KaraokeWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
   end
+
+  scope "/session", KaraokeWeb do
+    pipe_through :browser
+
+    resources "/", SessionController
+  end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", KaraokeWeb do

@@ -35,3 +35,5 @@ karaoke-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Mac fun
+**/.DS_Store
