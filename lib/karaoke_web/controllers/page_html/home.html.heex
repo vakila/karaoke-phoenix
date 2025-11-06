@@ -11,19 +11,15 @@
 
     </header>
 
-    <main class="py-8 flex flex-row justify-center items-center gap-4 ">
-          <label
-            for="start-session"
-            class="flex justify-center items-center rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105">
-              Start New Session
-              <input type="button" name="start-session" />
-          </label>
-          <label
-            for="join-session"
-            class="flex justify-center items-center rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105">
-              Join Existing Session
-              <input type="button" name="join-session" />
-          </label>
+    <main class="py-8 w-max m-auto flex flex-col justify-center items-center gap-4 ">
+        <.button id="start-session" class="btn w-full rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105" navigate={~p"/sessions/new"}>Start new session</.button>
+
+
+        <.button class="btn w-full h-fit rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105" id="join-session" >Join existing session
+          <.input name="session-code" placeholder="your-session-code" value="" errors={["enter a code"]} />
+        </.button>
+
+          
     </main>
 
 </div>

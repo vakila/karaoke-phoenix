@@ -35,5 +35,9 @@ karaoke-*.tar
 npm-debug.log
 /assets/node_modules/
 
+
+/.elixir_ls/
+
+
 # Mac fun
 **/.DS_Store

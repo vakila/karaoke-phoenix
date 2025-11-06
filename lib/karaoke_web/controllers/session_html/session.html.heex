@@ -1,0 +1,46 @@
+<Layouts.flash_group flash={@flash} />
+<div id="wrapper" class="px-4 py-10 sm:px-6 md:px-8 lg:px-28">
+    <header class="flex items-center justify-between w-full">
+      
+      <h1 class="text-4xl font-bold flex flex-row gap-2">
+        <img src="/images/recurse.svg" class="hidden md:block p-2 w-10"/>
+        Karaoke!
+      </h1>
+
+      <Layouts.theme_toggle />
+
+    </header>
+
+    <main class="py-8 flex flex-col justify-center items-center gap-4 ">
+          <p class="card">Invite friends to join your session with the code: <code>{@id}</code></p> 
+          
+
+          
+          <h3 class="card">UP NEXT</h3>
+
+
+          <.table id="users" rows={@songs}>
+            <:col :let={song} label="Singer">{song.singer}</:col>
+            <:col :let={song} label="Song">{song.name}</:col>
+          </.table>
+
+          <%!-- <div class=" w-full h-fit rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105" ></div> --%>
+          
+          <hr/>
+
+
+          <h3>Add a song</h3>
+
+          <.button class="btn w-full h-fit rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105" id="join-session" >
+            <.input name="singer" placeholder="your-name" value="" />
+            <.input name="song" placeholder="song-name" value="" />
+
+          </.button>
+            
+
+  
+    </main>
+
+</div>
+
+  

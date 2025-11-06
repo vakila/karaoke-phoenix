@@ -19,19 +19,15 @@ defmodule KaraokeWeb.Router do
 
     get "/", PageController, :home
 
+    resources "/sessions", SessionController
+
+
   end
-
-  scope "/session", KaraokeWeb do
-    pipe_through :browser
-
-    resources "/", SessionController
-  end
-
 
   # Other scopes may use custom stacks.
   # scope "/api", KaraokeWeb do
   #   pipe_through :api
-  # end
+  # end`
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:karaoke, :dev_routes) do
