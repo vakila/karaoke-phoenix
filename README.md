@@ -24,6 +24,7 @@ Pages:
 - / -> Start/join session (static)
 - /sessions/ABCD -> Queue for Session ABCD (live view)
 
+![Information Architecture](manual/Information_Architecture.png)
 
 ### V1
 
