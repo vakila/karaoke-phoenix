@@ -8,15 +8,3 @@ defmodule KaraokeWeb.PageHTML do
 
   embed_templates "page_html/*"
 end
-
-
-defmodule KaraokeWeb.SessionHTML do
-  @moduledoc """
-  This module contains pages rendered by PageController.
-
-  See the `page_html` directory for all templates available.
-  """
-  use KaraokeWeb, :html
-
-  embed_templates "session_html/*"
-end

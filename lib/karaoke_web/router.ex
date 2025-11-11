@@ -19,10 +19,6 @@ defmodule KaraokeWeb.Router do
 
     live "/", SongLive.Index, :index
 
-
-    live "/party", PartyLive.Index, :index
-
-
   end
 
   # Other scopes may use custom stacks.
