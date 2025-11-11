@@ -17,9 +17,10 @@ defmodule KaraokeWeb.Router do
   scope "/", KaraokeWeb do
     pipe_through :browser
 
-    live "/", PartyLive.Index, :index
+    live "/", SongLive.Index, :index
 
 
+    live "/party", PartyLive.Index, :index
 
 
   end
