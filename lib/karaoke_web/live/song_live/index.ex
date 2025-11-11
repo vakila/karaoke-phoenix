@@ -2,6 +2,7 @@ defmodule KaraokeWeb.SongLive.Index do
   use KaraokeWeb, :live_view
 
   alias Karaoke.Songs
+  require Logger
 
 
   @impl true
@@ -12,27 +13,26 @@ defmodule KaraokeWeb.SongLive.Index do
         Karaoke Songs!
       </.header>
 
-      <.form for={@form} id="song-form-new"  phx-submit="save">
-        <.input field={@form[:title]} type="text" label="Title" />
+      <.form for={@form} id="song-form-new"  phx-submit="save" class="sm:flex sm:align-center sm:gap-2">
+        <div class="flex-grow">
+          <.input field={@form[:title]} type="text" label="Title" />
+        </div>
         <.input field={@form[:singer]} type="text" label="Singer" />
-        <footer>
-          <.button phx-disable-with="Saving..." variant="primary"> <.icon name="hero-plus" /> Add Song</.button>
-
-        </footer>
+        <div class="h-full mt-[26px]">
+          <.button phx-disable-with="Saving..." variant="primary">
+          <.icon name="hero-plus" /> Add Song</.button>
+        </div>
       </.form>
 
       <.table
         id="songs"
         rows={@streams.songs}
-        row_click={fn {_id, song} -> JS.navigate(~p"/songs/#{song}") end}
+        row_click={fn {_id, song} -> JS.push("edit", value: %{id: song.id}) end}
       >
         <:col :let={{_id, song}} label="Title">{song.title}</:col>
         <:col :let={{_id, song}} label="Singer">{song.singer}</:col>
         <:action :let={{_id, song}}>
-          <div class="sr-only">
-            <.link navigate={~p"/songs/#{song}"}>Show</.link>
-          </div>
-          <.link navigate={~p"/songs/#{song}/edit"}>Edit</.link>
+          <.link phx-click={JS.push("edit", value: %{id: song.id})}>Edit</.link>
         </:action>
         <:action :let={{id, song}}>
           <.link
@@ -62,6 +62,11 @@ defmodule KaraokeWeb.SongLive.Index do
     this_song_id = "#{singer}-#{title}"
     new_song = %Songs.Song{title: title, singer: singer, id: this_song_id}
     {:noreply, stream_insert(socket, :songs, new_song)}
+  end
+
+  @impl true
+  def handle_event("edit", %{"id" => id}, socket) do
+    Logger.info "hello"
   end
 
 
