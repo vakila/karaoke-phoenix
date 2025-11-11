@@ -24,15 +24,21 @@ defmodule KaraokeWeb.SongLive.Index do
         </div>
       </.form>
 
+      <.live_component :for={{id, song} <- @streams.songs} song={song} module={KaraokeWeb.QueuedSongLive} id={song.id}/>
+
+
       <.table
         id="songs"
         rows={@streams.songs}
-        row_click={fn {_id, song} -> JS.push("edit", value: %{id: song.id}) end}
       >
-        <:col :let={{_id, song}} label="Title">{song.title}</:col>
-        <:col :let={{_id, song}} label="Singer">{song.singer}</:col>
+        <:col :let={{_id, song}} label="Title">
+          {song.title}
+        </:col>
+        <:col :let={{_id, song}} label="Singer">
+          {song.singer}
+        </:col>
         <:action :let={{_id, song}}>
-          <.link phx-click={JS.push("edit", value: %{id: song.id})}>Edit</.link>
+          <.link phx-click="toggle_edit" phx-value-id={song.id}>Edit</.link>
         </:action>
         <:action :let={{id, song}}>
           <.link
