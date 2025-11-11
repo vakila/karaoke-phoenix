@@ -17,9 +17,9 @@ defmodule KaraokeWeb.Router do
   scope "/", KaraokeWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", PartyLive.Index, :index
 
-    resources "/sessions", SessionController
+
 
 
   end
