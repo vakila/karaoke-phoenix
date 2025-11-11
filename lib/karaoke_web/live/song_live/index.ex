@@ -4,7 +4,6 @@ defmodule KaraokeWeb.SongLive.Index do
   alias Karaoke.Songs
   require Logger
 
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -13,19 +12,26 @@ defmodule KaraokeWeb.SongLive.Index do
         Karaoke Songs!
       </.header>
 
-      <.form for={@form} id="song-form-new"  phx-submit="save" class="sm:flex sm:align-center sm:gap-2">
+      <.form for={@form} id="song-form-new" phx-submit="save" class="sm:flex sm:align-center sm:gap-2">
         <div class="flex-grow">
           <.input field={@form[:title]} type="text" label="Title" />
         </div>
         <.input field={@form[:singer]} type="text" label="Singer" />
         <div class="h-full mt-[26px]">
           <.button phx-disable-with="Saving..." variant="primary">
-          <.icon name="hero-plus" /> Add Song</.button>
+            <.icon name="hero-plus" /> Add Song
+          </.button>
         </div>
       </.form>
 
-      <.live_component :for={{id, song} <- @streams.songs} song={song} module={KaraokeWeb.QueuedSongLive} id={song.id}/>
-
+      <div id="songs" phx-update="stream">
+        <.live_component
+          :for={{id, song} <- @streams.songs}
+          song={song}
+          module={KaraokeWeb.QueuedSongLive}
+          id={song.id}
+        />
+      </div>
 
       <.table
         id="songs"
@@ -62,7 +68,6 @@ defmodule KaraokeWeb.SongLive.Index do
      |> stream(:songs, [])}
   end
 
-
   @impl true
   def handle_event("save", %{"title" => title, "singer" => singer}, socket) do
     this_song_id = "#{singer}-#{title}"
@@ -72,9 +77,8 @@ defmodule KaraokeWeb.SongLive.Index do
 
   @impl true
   def handle_event("edit", %{"id" => id}, socket) do
-    Logger.info "hello"
+    Logger.info("hello")
   end
-
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
@@ -82,8 +86,6 @@ defmodule KaraokeWeb.SongLive.Index do
     {:noreply, stream_delete_by_dom_id(socket, :songs, dom_id)}
   end
 
-
   def add_song() do
-
   end
 end
