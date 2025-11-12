@@ -1,6 +1,8 @@
 defmodule KaraokeWeb.QueuedSongLive do
   use KaraokeWeb, :live_component
 
+  alias Karaoke.Songs
+
   @impl true
   def render(assigns) do
     editing = assigns.editing
@@ -42,7 +44,7 @@ defmodule KaraokeWeb.QueuedSongLive do
 
   @impl true
   def handle_event("save", %{"title" => title, "singer" => singer}, socket) do
-    data = %{title: title, singer: singer, id: socket.assigns.song.id}
+    data = Songs.Song.changeset(socket.assigns.song, %{title: title, singer: singer, id: socket.assigns.song.id})
     send(self(), {:save, data})
     {:noreply, socket
       |> assign(editing: false)

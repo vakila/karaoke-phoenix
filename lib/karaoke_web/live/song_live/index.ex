@@ -29,15 +29,12 @@ defmodule KaraokeWeb.SongLive.Index do
           />
       </div>
 
-       <.form for={@form} id="song-form-new" phx-submit="new" class="grid grid-cols-3 gap-2">
+       <.form for={@form} id="song-form-new" phx-update phx-submit="new" phx-change="change" class="grid grid-cols-3 gap-2">
           <.input field={@form[:title]} type="text" placeholder="song title" />
         <.input field={@form[:singer]} type="text" placeholder="singer name" />
           <.button phx-disable-with="Saving..." variant="primary">
           <.icon name="hero-plus" /> Add Song</.button>
       </.form>
-
-
-
 
     </Layouts.app>
     """
@@ -48,36 +45,45 @@ defmodule KaraokeWeb.SongLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Listing Songs")
-     |> assign(form: to_form(%{"title" => "", "singer" => ""}, action: :save))
+     |> assign(form: to_form(%{}, action: :new))
      |> stream(:songs, [%Songs.Song{title: "Closing Time", singer: "Everyone", id: "Everyone-Closing Time"}])}
   end
 
 
   @impl true
-  def handle_info({:save, data}, socket) do
-    {:noreply, stream_insert(socket, :songs, data)}
+  def handle_event("change", %{"title" => title, "singer" => singer}, socket) do
+    changeset = Songs.Song.changeset(%Songs.Song{}, %{title: title, singer: singer})
+
+    {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
   @impl true
   def handle_event("new", %{"title" => title, "singer" => singer}, socket) do
     this_song_id = "#{singer}-#{title}"
-    new_song = %Songs.Song{title: title, singer: singer, id: this_song_id}
-    {:noreply, socket
-      |> assign(form: to_form(%{"title" => "", "singer" => ""}, action: :save))
-      |> stream_insert(:songs, new_song)
-    }
-  end
+    changeset = Songs.Song.changeset(%Songs.Song{}, %{title: title, singer: singer, id: this_song_id})
+    if changeset.valid? do
+      {:noreply, socket
+        |> stream_insert(:songs, %Songs.Song{title: title, singer: singer, id: this_song_id})
+        |> assign(form: to_form(%{}))
+      }
+    else
+      dbg(changeset)
+      {:noreply, assign(socket, :form, to_form(changeset))}
+    end
 
-  @impl true
-  def handle_event("toggle_edit", %{"id" => id}, socket) do
-    dbg("toggle_edit")
-    {:noreply, socket}
+
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     dom_id = "#songs-#{id}"
     {:noreply, stream_delete_by_dom_id(socket, :songs, dom_id)}
+  end
+
+
+  @impl true
+  def handle_info({:save, data}, socket) do
+    {:noreply, stream_insert(socket, :songs, data)}
   end
 
 end
