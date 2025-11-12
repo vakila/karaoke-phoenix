@@ -29,12 +29,14 @@ defmodule KaraokeWeb.SongLive.Index do
           />
       </div>
 
-       <.form for={@form} id="song-form-new" phx-update phx-submit="new" phx-change="change" class="grid grid-cols-3 gap-2">
-          <.input field={@form[:title]} type="text" placeholder="song title" />
-        <.input field={@form[:singer]} type="text" placeholder="singer name" />
+      <div>
+       <.form for={@form} id="song-form-new" phx-change="validate" phx-submit="add_song" class="grid grid-cols-3 gap-2">
+          <.input field={@form[:title]} type="text" placeholder="song title"  />
+          <.input field={@form[:singer]} type="text" placeholder="singer name" />
           <.button phx-disable-with="Saving..." variant="primary">
           <.icon name="hero-plus" /> Add Song</.button>
       </.form>
+    </div>
 
     </Layouts.app>
     """
@@ -45,30 +47,38 @@ defmodule KaraokeWeb.SongLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Listing Songs")
-     |> assign(form: to_form(%{}, action: :new))
+     |> assign(form: to_form(Songs.get_changeset(), action: :validate))
      |> stream(:songs, [%Songs.Song{title: "Closing Time", singer: "Everyone", id: "Everyone-Closing Time"}])}
   end
 
 
-  @impl true
-  def handle_event("change", %{"title" => title, "singer" => singer}, socket) do
-    changeset = Songs.Song.changeset(%Songs.Song{}, %{title: title, singer: singer})
-
-    {:noreply, assign(socket, :form, to_form(changeset))}
+  def handle_event("validate", %{"song" => song}, socket) do
+    dbg(song)
+    changeset = Songs.get_changeset(song)
+    {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
-  @impl true
-  def handle_event("new", %{"title" => title, "singer" => singer}, socket) do
+  def handle_event("validate", %{"singer" => singer, "title" => title}, socket) do
+    dbg(singer)
+    dbg(title)
+    changeset = Songs.get_changeset(%{singer: singer, title: title})
+    {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
+  end
+
+  def handle_event("add_song", %{"song" => song}, socket) do
+    %{"title" => title, "singer" => singer} = song
     this_song_id = "#{singer}-#{title}"
-    changeset = Songs.Song.changeset(%Songs.Song{}, %{title: title, singer: singer, id: this_song_id})
-    if changeset.valid? do
-      {:noreply, socket
-        |> stream_insert(:songs, %Songs.Song{title: title, singer: singer, id: this_song_id})
-        |> assign(form: to_form(%{}))
-      }
+    changeset = Songs.get_changeset(%{title: title, singer: singer, id: this_song_id})
+    if !changeset.valid? do
+            dbg("INVALID")
+
+      {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
     else
-      dbg(changeset)
-      {:noreply, assign(socket, :form, to_form(changeset))}
+      dbg("VALID")
+
+     {:noreply, socket
+        |> stream_insert(:songs, %Songs.Song{title: title, singer: singer, id: this_song_id})
+        |> assign(form: to_form(Songs.get_changeset(), action: :new))}
     end
 
 

@@ -2,7 +2,7 @@ defmodule Karaoke.Songs.Song do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "songs" do
+  embedded_schema do
     field :title, :string
     field :singer, :string
 

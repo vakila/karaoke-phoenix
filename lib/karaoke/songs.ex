@@ -4,7 +4,6 @@ defmodule Karaoke.Songs do
   """
 
   import Ecto.Query, warn: false
-  alias Karaoke.Repo
 
   alias Karaoke.Songs.Song
 
@@ -17,9 +16,9 @@ defmodule Karaoke.Songs do
       [%Song{}, ...]
 
   """
-  def list_songs do
-    Repo.all(Song)
-  end
+  # def list_songs do
+  #   Repo.all(Song)
+  # end
 
   @doc """
   Gets a single song.
@@ -35,7 +34,7 @@ defmodule Karaoke.Songs do
       ** (Ecto.NoResultsError)
 
   """
-  def get_song!(id), do: Repo.get!(Song, id)
+  # def get_song!(id), do: Repo.get!(Song, id)
 
   @doc """
   Creates a song.
@@ -49,10 +48,9 @@ defmodule Karaoke.Songs do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_song(attrs) do
+  def get_changeset(attrs \\ %{}) do
     %Song{}
     |> Song.changeset(attrs)
-    |> Repo.insert()
   end
 
   @doc """
@@ -70,7 +68,6 @@ defmodule Karaoke.Songs do
   def update_song(%Song{} = song, attrs) do
     song
     |> Song.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -85,20 +82,8 @@ defmodule Karaoke.Songs do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_song(%Song{} = song) do
-    Repo.delete(song)
-  end
+  # def delete_song(%Song{} = song) do
+  #   Repo.delete(song)
+  # end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking song changes.
-
-  ## Examples
-
-      iex> change_song(song)
-      %Ecto.Changeset{data: %Song{}}
-
-  """
-  def change_song(%Song{} = song, attrs \\ %{}) do
-    Song.changeset(song, attrs)
-  end
 end
