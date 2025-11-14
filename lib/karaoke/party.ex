@@ -13,15 +13,25 @@ defmodule Karaoke.Party do
   @doc """
   Starts a new party aka song queue.
   """
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, [], opts)
+  def start_link(songs \\ [], opts) do
+    GenServer.start_link(__MODULE__, songs, opts)
   end
+
+
+  @doc """
+  Gets the next song from `party` queue.
+  """
+  def list_songs(party) do
+    GenServer.call(party.pid, {:list})
+  end
+
+
 
   @doc """
   Gets the next song from `party` queue.
   """
   def next_song(party) do
-    GenServer.call(party, {:next})
+    GenServer.call(party.pid, {:next})
   end
 
 
@@ -35,17 +45,17 @@ defmodule Karaoke.Party do
   @doc """
   Appends the `song` to the `party` queue.
   """
-  def add_song(party, %Song{} = song) do
-    GenServer.call(party, {:add, song})
+  def add_song(party, song) do
+    GenServer.call(party.pid, {:add, song})
   end
 
   @doc """
-  Deletes song at `s` from `party` queue.
+  Deletes song at `song_index` from `party` queue.
 
-  Returns the current value of `song_id`, if `song_id` exists.
+  Returns the current song at `song_index`, if one exists.
   """
   def delete_song(party, song_index) do
-    GenServer.call(party, {:delete, song_index})
+    GenServer.call(party.pid, {:delete, song_index})
   end
 
 
@@ -64,10 +74,16 @@ defmodule Karaoke.Party do
 
   """
   def update_song(party, song_index, song) do
-    GenServer.call(party, {:update, song_index, song})
+    GenServer.call(party.pid, {:update, song_index, song})
   end
 
-
+  def validate_song(song) do
+    changeset = Song.to_changeset(song)
+    if (!changeset.valid?) do
+      {:error, changeset}
+    end
+    {:ok, changeset}
+  end
 
   #### Callbacks
 
@@ -75,6 +91,7 @@ defmodule Karaoke.Party do
   @impl true
   def init(queue \\ []) do
     party = %{
+      pid: self(),
       queue: queue,
     }
 
@@ -82,25 +99,24 @@ defmodule Karaoke.Party do
   end
 
   @impl true
-  def handle_cast({:update, song_index, song}, party) do
+  def handle_call({:update, song_index, song}, _from, party) do
     new_queue = List.update_at(party.queue, song_index, song)
-    {:reply, :ok, %{queue: new_queue}}
+    {:reply, :ok, Enum.into(party.queue, new_queue)}
   end
 
 
 
   @impl true
-  def handle_cast({:add, song}, party) do
-    # new_party = [ song |  party ]
+  def handle_call({:add, song}, _from, party) do
     new_queue = party.queue ++ [song]
-    {:noreply, %{queue: new_queue}}
+    {:reply, :ok,  Enum.into(party.queue, new_queue)}
   end
 
 
   @impl true
-  def handle_cast({:delete, song_index}, party) do
+  def handle_call({:delete, song_index}, _from, party) do
     new_queue = List.delete_at(party.queue, song_index)
-    {:reply, :ok, %{queue: new_queue}}
+    {:reply, :ok, Enum.into(party.queue, new_queue)}
   end
 
 
@@ -108,15 +124,14 @@ defmodule Karaoke.Party do
   @impl true
   def handle_call({:next}, _from, party) do
     [next_song | new_queue] = party.queue
-    {:reply, next_song, %{queue: new_queue}}
+    {:reply, next_song, Enum.into(party.queue, new_queue)}
   end
 
 
 
   @impl true
   def handle_call({:list}, _from, party) do
-    [next_song | new_queue] = party.queue
-    {:reply, next_song, %{queue: new_queue}}
+    {:reply, party.queue, party}
   end
 
 

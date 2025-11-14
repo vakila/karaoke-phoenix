@@ -2,7 +2,7 @@ defmodule Karaoke.Party.Song do
   use Ecto.Schema
   import Ecto.Changeset
 
-  embedded_schema do
+  schema "song" do
     field :title, :string
     field :singer, :string
     field :position, :integer
@@ -10,8 +10,12 @@ defmodule Karaoke.Party.Song do
     timestamps(type: :utc_datetime)
   end
 
+  @spec to_changeset(
+          :invalid
+          | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
+        ) :: Ecto.Changeset.t()
   def to_changeset(attrs) do
-    changeset(%{}, attrs)
+    changeset(%Karaoke.Party.Song{}, attrs)
   end
 
   def changeset(song, attrs) do

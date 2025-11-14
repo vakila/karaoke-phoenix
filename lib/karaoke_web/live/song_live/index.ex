@@ -65,7 +65,7 @@ defmodule KaraokeWeb.SongLive.Index do
 
   def handle_event("validate", %{"song" => song}, socket) do
     dbg(song)
-    changeset = Song.changeset(%Song{}, song)
+    {_, changeset} = Song.to_changeset(song)
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
