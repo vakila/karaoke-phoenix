@@ -13,6 +13,7 @@ defmodule Karaoke.Application do
       {Phoenix.PubSub, name: Karaoke.PubSub},
       # Start a worker by calling: Karaoke.Worker.start_link(arg)
       # {Karaoke.Worker, arg},
+      {Karaoke.Party, []},
       # Start to serve requests, typically the last entry
       KaraokeWeb.Endpoint
     ]
