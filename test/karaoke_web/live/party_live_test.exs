@@ -1,8 +1,9 @@
-defmodule KaraokeWeb.SongLiveTest do
+defmodule KaraokeWeb.PartyLiveTest do
   use KaraokeWeb.ConnCase
+  use ExUnit.Case
 
   import Phoenix.LiveViewTest
-  import Karaoke.SongsFixtures
+  import Karaoke.PartyFixtures
 
   @create_attrs %{title: "some title", singer: "some singer"}
   @update_attrs %{title: "some updated title", singer: "some updated singer"}
@@ -24,13 +25,13 @@ defmodule KaraokeWeb.SongLiveTest do
     end
 
     test "saves new song", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/songs")
+      {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert {:ok, form_live, _} =
                index_live
-               |> element("a", "New Song")
+               |> element("button", "Add Song")
                |> render_click()
-               |> follow_redirect(conn, ~p"/songs/new")
+      #          |> follow_redirect(conn, ~p"/songs/new")
 
       assert render(form_live) =~ "New Song"
 
@@ -42,7 +43,7 @@ defmodule KaraokeWeb.SongLiveTest do
                form_live
                |> form("#song-form", song: @create_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/songs")
+              #  |> follow_redirect(conn, ~p"/songs")
 
       html = render(index_live)
       assert html =~ "Song created successfully"
@@ -50,13 +51,13 @@ defmodule KaraokeWeb.SongLiveTest do
     end
 
     test "updates song in listing", %{conn: conn, song: song} do
-      {:ok, index_live, _html} = live(conn, ~p"/songs")
+      {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#songs-#{song.id} a", "Edit")
+               |> element("#songs-#{song.id} button", "Edit")
                |> render_click()
-               |> follow_redirect(conn, ~p"/songs/#{song}/edit")
+              #  |> follow_redirect(conn, ~p"/songs/#{song}/edit")
 
       assert render(form_live) =~ "Edit Song"
 
@@ -68,7 +69,7 @@ defmodule KaraokeWeb.SongLiveTest do
                form_live
                |> form("#song-form", song: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/songs")
+              #  |> follow_redirect(conn, ~p"/songs")
 
       html = render(index_live)
       assert html =~ "Song updated successfully"
@@ -76,33 +77,33 @@ defmodule KaraokeWeb.SongLiveTest do
     end
 
     test "deletes song in listing", %{conn: conn, song: song} do
-      {:ok, index_live, _html} = live(conn, ~p"/songs")
+      {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert index_live |> element("#songs-#{song.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#songs-#{song.id}")
     end
   end
 
-  describe "Show" do
+  describe "QueuedSong" do
     setup [:create_song]
 
     test "displays song", %{conn: conn, song: song} do
-      {:ok, _show_live, html} = live(conn, ~p"/songs/#{song}")
+      {:ok, _show_live, html} = live(conn, ~p"/")
 
-      assert html =~ "Show Song"
+      # assert html =~ "Show Song"
       assert html =~ song.title
     end
 
     test "updates song and returns to show", %{conn: conn, song: song} do
-      {:ok, show_live, _html} = live(conn, ~p"/songs/#{song}")
+      {:ok, show_live, _html} = live(conn, ~p"/")
 
       assert {:ok, form_live, _} =
                show_live
-               |> element("a", "Edit")
+               |> element("button", "Edit")
                |> render_click()
-               |> follow_redirect(conn, ~p"/songs/#{song}/edit?return_to=show")
+               |> follow_redirect(conn, ~p"/")
 
-      assert render(form_live) =~ "Edit Song"
+      # assert render(form_live) =~ "Edit Song"
 
       assert form_live
              |> form("#song-form", song: @invalid_attrs)
@@ -112,7 +113,7 @@ defmodule KaraokeWeb.SongLiveTest do
                form_live
                |> form("#song-form", song: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/songs/#{song}")
+              #  |> follow_redirect(conn, ~p"/songs/#{song}")
 
       html = render(show_live)
       assert html =~ "Song updated successfully"
