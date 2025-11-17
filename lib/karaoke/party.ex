@@ -109,14 +109,14 @@ defmodule Karaoke.Party do
   @impl true
   def handle_call({:add, song}, _from, party) do
     new_queue = party.queue ++ [song]
-    {:reply, :ok,  Enum.into(party.queue, new_queue)}
+    {:noreply, Enum.into(party, %{queue: new_queue})}
   end
 
 
   @impl true
   def handle_call({:delete, song_index}, _from, party) do
     new_queue = List.delete_at(party.queue, song_index)
-    {:reply, :ok, Enum.into(party.queue, new_queue)}
+    {:noreply, Enum.into(party, %{queue: new_queue})}
   end
 
 
@@ -124,7 +124,7 @@ defmodule Karaoke.Party do
   @impl true
   def handle_call({:next}, _from, party) do
     [next_song | new_queue] = party.queue
-    {:reply, next_song, Enum.into(party.queue, new_queue)}
+    {:reply, next_song, Enum.into(party, %{queue: new_queue})}
   end
 
 

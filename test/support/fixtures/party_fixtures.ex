@@ -22,10 +22,9 @@ defmodule Karaoke.PartyFixtures do
     IO.puts(party)
     party
   end
-  def party_fixture([%Song{}] = songs) do
-    {:ok, pid} = Party.start_link(songs)
-    {:reply, _queue, party} = GenServer.call(pid, {:list})
-    IO.puts(party)
-    party
+
+  def party_fixture(songs) do
+    GenServer.start_link(Party, songs)
+
   end
 end
