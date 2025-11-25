@@ -16,15 +16,14 @@ defmodule Karaoke.PartyFixtures do
   @doc """
   Generate a party with a list of songs.
   """
-  def party_fixture() do
-    {:ok, pid} = Party.start_link([])
-    {:reply, _queue, party} = GenServer.call(pid, {:list})
-    IO.puts(party)
-    party
+  def party_fixture(songs \\ []) do
+    Party.subscribe(Party)
+    party = Party.list_songs(Party)
+    dbg(party)
+    for(song <- songs) do
+      Party.add_song(party, song)
+    end
+    Party.list_songs(Party)
   end
 
-  def party_fixture(songs) do
-    GenServer.start_link(Party, songs)
-
-  end
 end

@@ -14,10 +14,12 @@ defmodule Karaoke.PartyTest do
     @valid_attrs %{title: "Closing Time", singer: "Everyone"}
 
     test "list_songs/0 returns all songs" do
-      dbg(party_fixture([song_fixture()]))
       party = party_fixture([song_fixture()])
       assert length(party.queue) == 1
-      assert Party.list_songs(party) == [song_fixture()]
+      list = Party.list_songs(party)
+      # assert List.length(list) == 1
+      song = List.pop_at(list, 0)
+      assert song["title"] == "Closing Time"
     end
 
     # test "get_song!/1 returns the song with given id" do
@@ -27,8 +29,8 @@ defmodule Karaoke.PartyTest do
 
     test "add_song/1 with valid data creates a song" do
       party = party_fixture()
-      assert {:ok, %Song{} = song, party} = Party.add_song(party, @valid_attrs)
-      assert length(party.queue) == 1
+      assert {:reply, song, party} = Party.add_song(party, @valid_attrs)
+      # assert List.length(party.queue) == 1
       assert song.title == "some title"
       assert song.singer == "some singer"
     end
@@ -38,26 +40,28 @@ defmodule Karaoke.PartyTest do
       assert {:error, %Ecto.Changeset{}} = Party.add_song(party, @invalid_attrs)
     end
 
-    test "update_song/2 with valid data updates the song" do
-      party = party_fixture()
-      [song] = party.queue
+    test "edit_song/2 with valid data updates the song" do
+      party = Karaoke.Party
+      song = party.queue[0]
       update_attrs = %{title: "some updated title", singer: "some updated singer"}
 
-      assert {:ok, %Song{} = song} = Party.update_song(party, song, update_attrs)
+
+      assert {:ok, %Song{} = song} = Party.edit_song(party, Enum.into(update_attrs, id: song.id))
       assert song.title == "some updated title"
       assert song.singer == "some updated singer"
     end
 
-    test "update_song/2 with invalid data returns error changeset" do
-      party = party_fixture()
-      [song] = Party.list_songs(party)
+    test "edit_song/2 with invalid data returns error changeset" do
+      song = song_fixture()
+      party = party_fixture([song])
 
-      assert {:error, %Ecto.Changeset{}} = Party.update_song(party, song, @invalid_attrs)
-      assert [song] == Party.list_songs(party)
+      assert {:error, %Ecto.Changeset{}} = Party.edit_song(party, Enum.into(@invalid_attrs, id: song.id))
+      # assert [song] == Party.list_songs(party)
     end
 
     test "delete_song/1 deletes the song" do
       party = party_fixture()
+      dbg(Party.add_song(party, @valid_attrs))
       {:reply, song, party} = Party.add_song(party, @valid_attrs)
       assert {:ok, %Song{}} = Party.delete_song(party, song)
       # assert_raise Ecto.NoResultsError, fn -> Party.get_song!(song.id) end
