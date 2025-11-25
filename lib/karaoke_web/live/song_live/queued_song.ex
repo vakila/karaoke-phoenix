@@ -1,6 +1,7 @@
 defmodule KaraokeWeb.QueuedSongLive do
   use KaraokeWeb, :live_component
 
+  alias Karaoke.Party
   alias Karaoke.Party.Song
 
   @impl true
@@ -44,11 +45,22 @@ defmodule KaraokeWeb.QueuedSongLive do
 
   @impl true
   def handle_event("save", %{"title" => title, "singer" => singer}, socket) do
-    data = Song.changeset(socket.assigns.song, %{title: title, singer: singer, id: socket.assigns.song.id})
-    send(self(), {:save, data})
-    {:noreply, socket
-      |> assign(editing: false)
-    }
+    song_id = socket.assigns.song.id
+    changeset = Song.changeset(socket.assigns.song, %{title: title, singer: singer})
+
+    if !changeset.valid? do
+      {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
+
+    else
+      new_queue = Party.edit_song(Party, %Song{title: title, singer: singer, id: song_id})
+
+      {:noreply, socket
+        |> assign(editing: false)
+        |> assign(songs: new_queue)
+        |> put_flash(:info, "Song added to queue")
+        |> assign(form: to_form(%{}, action: :new))}
+    end
+
   end
 
   @impl true

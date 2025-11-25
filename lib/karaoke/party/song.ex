@@ -10,10 +10,6 @@ defmodule Karaoke.Party.Song do
     timestamps(type: :utc_datetime)
   end
 
-  @spec to_changeset(
-          :invalid
-          | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
-        ) :: Ecto.Changeset.t()
   def to_changeset(attrs) do
     changeset(%Karaoke.Party.Song{}, attrs)
   end
@@ -23,4 +19,15 @@ defmodule Karaoke.Party.Song do
     |> cast(attrs, [:title, :singer])
     |> validate_required([:title, :singer])
   end
+
+
+  def validate(songData) do
+    changeset = to_changeset(songData)
+    if (!changeset.valid?) do
+      {:error, changeset}
+    end
+    {:ok, changeset}
+  end
+
+
 end

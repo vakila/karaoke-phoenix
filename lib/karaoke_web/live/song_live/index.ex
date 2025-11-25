@@ -2,8 +2,10 @@ defmodule KaraokeWeb.SongLive.Index do
   # alias KaraokeWeb.QueuedSongLive
   use KaraokeWeb, :live_view
 
+  alias KaraokeWeb.QueuedSongLive
   alias Karaoke.Party
   alias Karaoke.Party.Song
+
 
 
   @impl true
@@ -20,7 +22,7 @@ defmodule KaraokeWeb.SongLive.Index do
         <span></span>
       </div>
 
-      <%!-- <div id="queued_songs" >
+      <div id="queued_songs" >
         <.live_component
           :for={song <- @songs}
           :key={song.id}
@@ -29,7 +31,7 @@ defmodule KaraokeWeb.SongLive.Index do
           song={song}
           editing={false}
           />
-      </div> --%>
+      </div>
 
       <div>
        <.form for={@form} id="song-form-new" phx-change="validate" phx-submit="add_song" class="grid grid-cols-3 gap-2">
@@ -46,26 +48,37 @@ defmodule KaraokeWeb.SongLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      # KaraokeWeb.Endpoint.subscribe("songs")
-      IO.puts('CONNECTED')
-
-      {:ok, socket}
-    end
-
     dbg(socket)
 
-    {:ok,
-     socket
-     |> assign(:page_title, "Karaoke Songs")
-    #  |> assign(:party, socket.party)
-     |> assign(form: to_form(%{}, action: :validate))}
+
+    # {:ok, party_pid} = Party.start_link([])
+    # dbg(party_pid)
+    # songs = Party.list_songs(party_pid)
+    # dbg(songs)
+
+
+
+
+    if connected?(socket) do
+      party = Party.subscribe(Party)
+
+      IO.puts("get the party started")
+      dbg(party.queue)
+      {:ok, socket |> assign(party: party) |> assign(songs: party.queue)}
+    end
+
+    {:ok, socket
+      |> assign(:page_title, "Karaoke Songs")
+      |> assign(songs: [])
+      |> assign(form: to_form(%{}, action: :validate))}
+
+
   end
 
 
   def handle_event("validate", %{"song" => song}, socket) do
     dbg(song)
-    {_, changeset} = Song.to_changeset(song)
+    changeset = Song.to_changeset(song)
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
@@ -78,22 +91,19 @@ defmodule KaraokeWeb.SongLive.Index do
 
   def handle_event("add_song", %{"song" => song}, socket) do
     %{"title" => title, "singer" => singer} = song
+
     this_song_id = "#{singer}-#{title}"
     changeset = Song.to_changeset(%{title: title, singer: singer, id: this_song_id})
 
     if !changeset.valid? do
-      dbg("INVALID")
       {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
 
     else
-      dbg("VALID")
-      # Karaoke.Endpoint.broadcast("songs", "song_added", song)
-      #       Party.cast("songs", "song_added", song)
-      Party.add_song(socket.party, song)
+      new_queue = Party.add_song(Party, %Song{title: title, singer: singer, id: this_song_id})
 
       {:noreply, socket
-        # |> assign(:songs, %Song{title: title, singer: singer, id: this_song_id})
-        # |> put_flash(:info, "Song added to queue")
+        |> assign(songs: new_queue)
+        |> put_flash(:info, "Song added to queue")
         |> assign(form: to_form(%{}, action: :new))}
     end
 
@@ -110,9 +120,8 @@ defmodule KaraokeWeb.SongLive.Index do
 
 
   @impl true
-  def handle_info("song_updated", socket) do
-    dbg("song_updated")
-    {:noreply, socket} # actually an upsert
+  def handle_info({:updated, new_party}, socket) do
+    {:noreply, socket |> assign(party: new_party) |> assign(songs: new_party.queue)}
   end
 
   # def handle_in({:song_added, payload}, socket) do

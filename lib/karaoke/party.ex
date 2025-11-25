@@ -5,48 +5,42 @@ defmodule Karaoke.Party do
   And server
   """
 
+  # alias Karaoke.Party.Queue
   alias Karaoke.Party.Song
 
   use GenServer
 
-
   @doc """
   Starts a new party aka song queue.
   """
-  def start_link(songs \\ [], opts) do
-    GenServer.start_link(__MODULE__, songs, opts)
+  def start_link(opts) do
+    {:ok, pid} = GenServer.start_link(__MODULE__, [], opts)
+    dbg(pid)
+    {:ok, pid}
   end
 
 
   @doc """
-  Gets the next song from `party` queue.
+  Gets all the songs in the queue.
   """
   def list_songs(party) do
-    GenServer.call(party.pid, {:list})
+    GenServer.call(party, {:list})
   end
 
 
 
   @doc """
-  Gets the next song from `party` queue.
+  Gets the next song from the queue.
   """
   def next_song(party) do
-    GenServer.call(party.pid, {:next})
+    GenServer.call(party, {:next})
   end
 
-
-  # @doc """
-  # Gets the `party` song queue.
-  # """
-  # def list_songs(party) do
-  #   GenServer.call(party, {:list})
-  # end
-
   @doc """
-  Appends the `song` to the `party` queue.
+  Appends the `song` to the queue.
   """
   def add_song(party, song) do
-    GenServer.call(party.pid, {:add, song})
+    GenServer.call(party, {:add, song})
   end
 
   @doc """
@@ -55,10 +49,8 @@ defmodule Karaoke.Party do
   Returns the current song at `song_index`, if one exists.
   """
   def delete_song(party, song_index) do
-    GenServer.call(party.pid, {:delete, song_index})
+    GenServer.call(party, {:delete, song_index})
   end
-
-
 
 
   @doc """
@@ -73,50 +65,75 @@ defmodule Karaoke.Party do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_song(party, song_index, song) do
-    GenServer.call(party.pid, {:update, song_index, song})
+  def edit_song(party, song) do
+    GenServer.call(party, {:edit, song})
   end
 
-  def validate_song(song) do
-    changeset = Song.to_changeset(song)
-    if (!changeset.valid?) do
-      {:error, changeset}
+
+
+  @doc """
+  Subscribes the current process to the party.
+  """
+  def subscribe(party) do
+    GenServer.call(party, {:subscribe, self()})
+  end
+
+
+  defp broadcast(party, message) do
+    for pid <- party.subscribers do
+      send(pid, message)
     end
-    {:ok, changeset}
   end
 
-  #### Callbacks
+
+  # #### Callbacks
 
 
   @impl true
-  def init(queue \\ []) do
+  def init(songs) do
     party = %{
       pid: self(),
-      queue: queue,
+      queue: songs,
+      subscribers: MapSet.new([])
     }
+    dbg(self())
+    {:ok, party}
+  end
 
-    {:ok, party }
+  def match_song_id(%Song{} = song, id) do
+    song.id == id
   end
 
   @impl true
-  def handle_call({:update, song_index, song}, _from, party) do
-    new_queue = List.update_at(party.queue, song_index, song)
-    {:reply, :ok, Enum.into(party.queue, new_queue)}
+  def handle_call({:edit, song}, _from, party) do
+    song_index = Enum.find_index(party.queue, &match_song_id(&1, song.id))
+    dbg("UPDATE")
+    dbg(party.queue)
+    dbg(song_index)
+    dbg(song)
+    new_queue = List.replace_at(party.queue, song_index, song)
+    new_party = put_in(party.queue, new_queue)
+    broadcast(party, {:updated, new_party})
+    {:reply, new_queue, new_party}
   end
 
 
 
   @impl true
   def handle_call({:add, song}, _from, party) do
-    new_queue = party.queue ++ [song]
-    {:noreply, Enum.into(party, %{queue: new_queue})}
+    new_queue = List.insert_at(party.queue, -1, song)
+    new_party = put_in(party.queue, new_queue)
+    broadcast(party, {:updated, new_party})
+    {:reply, new_queue, new_party }
   end
 
 
   @impl true
   def handle_call({:delete, song_index}, _from, party) do
-    new_queue = List.delete_at(party.queue, song_index)
-    {:noreply, Enum.into(party, %{queue: new_queue})}
+    {_song, new_queue} = List.pop_at(party.queue, song_index)
+    new_party = put_in(party.queue, new_queue)
+    broadcast(party, {:updated, new_party})
+    {:reply, new_queue, new_party}
   end
 
 
@@ -124,7 +141,9 @@ defmodule Karaoke.Party do
   @impl true
   def handle_call({:next}, _from, party) do
     [next_song | new_queue] = party.queue
-    {:reply, next_song, Enum.into(party, %{queue: new_queue})}
+    new_party = put_in(party.queue, new_queue)
+    broadcast(party, {:updated, next_song, new_queue})
+    {:reply, next_song, new_party}
   end
 
 
@@ -134,6 +153,21 @@ defmodule Karaoke.Party do
     {:reply, party.queue, party}
   end
 
+
+  @impl true
+  def handle_call({:subscribe, pid}, _from, party) do
+    Process.monitor(pid)
+    party = update_in(party.subscribers, &MapSet.put(&1, pid))
+    broadcast(party, {:updated, party})
+    {:reply, party, party}
+  end
+
+  @impl true
+  def handle_info({:DOWN, _ref, _type, pid, _reason}, party) do
+    party = update_in(party.subscribers, &MapSet.delete(&1, pid))
+    broadcast(party, {:updated, party})
+    {:noreply, party}
+  end
 
 
 

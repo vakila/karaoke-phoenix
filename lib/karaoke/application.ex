@@ -6,6 +6,7 @@ defmodule Karaoke.Application do
   use Application
 
   @impl true
+  @spec start(any(), any()) :: {:error, any()} | {:ok, pid()}
   def start(_type, _args) do
     children = [
       KaraokeWeb.Telemetry,
@@ -13,7 +14,7 @@ defmodule Karaoke.Application do
       {Phoenix.PubSub, name: Karaoke.PubSub},
       # Start a worker by calling: Karaoke.Worker.start_link(arg)
       # {Karaoke.Worker, arg},
-      {Karaoke.Party, []},
+      {Karaoke.Party, name: Karaoke.Party},
       # Start to serve requests, typically the last entry
       KaraokeWeb.Endpoint
     ]
