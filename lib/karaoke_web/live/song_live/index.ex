@@ -13,11 +13,11 @@ defmodule KaraokeWeb.SongLive.Index do
     ~H"""
     <Layouts.app flash={@flash}>
       <.header>
-        Karaoke Songs!
+        Songs!
       </.header>
 
       <div class="font-bold grid grid-cols-3 gap-2">
-        <span>SONG</span>
+        <span>SONG TITLE</span>
         <span>SINGER</span>
         <span></span>
       </div>
