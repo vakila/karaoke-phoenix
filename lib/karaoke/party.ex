@@ -5,7 +5,6 @@ defmodule Karaoke.Party do
   And server
   """
 
-  # alias Karaoke.Party.Queue
   alias Karaoke.Party.Song
 
   use GenServer
@@ -58,10 +57,10 @@ defmodule Karaoke.Party do
 
   ## Examples
 
-      iex> update_song(song, %{field: new_value})
+      iex> edit_song(song, %{field: new_value})
       {:ok, %Song{}}
 
-      iex> update_song(song, %{field: bad_value})
+      iex> edit_song(song, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -107,10 +106,6 @@ defmodule Karaoke.Party do
   @impl true
   def handle_call({:edit, song}, _from, party) do
     song_index = Enum.find_index(party.queue, &match_song_id(&1, song.id))
-    dbg("UPDATE")
-    dbg(party.queue)
-    dbg(song_index)
-    dbg(song)
     new_queue = List.replace_at(party.queue, song_index, song)
     new_party = put_in(party.queue, new_queue)
     broadcast(party, {:updated, new_party})
