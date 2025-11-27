@@ -75,13 +75,14 @@ defmodule KaraokeWeb.SongLive.Index do
 
   end
 
-
+  @impl true
   def handle_event("validate", %{"song" => song}, socket) do
     dbg(song)
     changeset = Song.to_changeset(song)
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
+  @impl true
   def handle_event("validate", %{"singer" => singer, "title" => title}, socket) do
     dbg(singer)
     dbg(title)
@@ -89,6 +90,7 @@ defmodule KaraokeWeb.SongLive.Index do
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
+  @impl true
   def handle_event("add_song", %{"song" => song}, socket) do
     %{"title" => title, "singer" => singer} = song
 
@@ -111,12 +113,6 @@ defmodule KaraokeWeb.SongLive.Index do
   end
 
 
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    dom_id = "#songs-#{id}"
-    {:noreply, stream_delete_by_dom_id(socket, :songs, dom_id)}
-  end
 
 
   @impl true

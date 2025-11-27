@@ -29,5 +29,4 @@ defmodule Karaoke.Party.Song do
     {:ok, changeset}
   end
 
-
 end

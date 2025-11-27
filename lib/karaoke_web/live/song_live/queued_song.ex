@@ -6,8 +6,7 @@ defmodule KaraokeWeb.QueuedSongLive do
 
   @impl true
   def render(assigns) do
-    editing = assigns.editing
-    if editing do
+    if assigns.editing do
     ~H"""
     <div id={@song.id} class="flex">
     <.form for={@form} id="edit-song-form" phx-target={@myself} phx-submit="save" class="grid grid-cols-3 gap-2 py-2">
@@ -20,13 +19,13 @@ defmodule KaraokeWeb.QueuedSongLive do
     """
     else
       ~H"""
-      <div id={@song.id} class="grid grid-cols-3 gap-2 py-2">
+      <div id={@song.id} class="grid grid-cols-4 gap-2 py-2">
         <%!-- <span>{@song.id}</span> --%>
         <span>{@song.title}</span>
         <span>{@song.singer}</span>
         <%!-- <span>Editing? {@editing}</span> --%>
         <.button phx-click="edit" phx-target={@myself}>Edit</.button>
-
+        <.button phx-click="delete" phx-target={@myself}>Delete</.button>
       </div>
       """
 
@@ -44,15 +43,24 @@ defmodule KaraokeWeb.QueuedSongLive do
   end
 
   @impl true
-  def handle_event("save", %{"title" => title, "singer" => singer}, socket) do
-    song_id = socket.assigns.song.id
-    changeset = Song.changeset(socket.assigns.song, %{title: title, singer: singer})
+  def handle_event("save", new_params, socket) do
+    old_song = socket.assigns.song
+    dbg(old_song)
+    song_id = old_song.id
+    dbg(song_id)
+    changeset = Song.changeset(old_song, new_params)
+    dbg(changeset)
+
 
     if !changeset.valid? do
-      {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
+      {:noreply, socket
+        |> assign(:form, to_form(changeset, action: :validate)
+        |> put_flash(:error, "Invalid song data"))}
 
     else
-      new_queue = Party.edit_song(Party, %Song{title: title, singer: singer, id: song_id})
+      new_song = Ecto.Changeset.apply_changes(changeset)
+      dbg(new_song)
+      new_queue = Party.edit_song(Party, new_song)
 
       {:noreply, socket
         |> assign(editing: false)
@@ -62,6 +70,15 @@ defmodule KaraokeWeb.QueuedSongLive do
     end
 
   end
+
+
+  @impl true
+  def handle_event("delete", _params, socket) do
+    song = socket.assigns.song
+    new_queue = Party.delete_song(Party, song.id)
+    {:noreply, assign(socket, songs: new_queue)}
+  end
+
 
   @impl true
   def update(assigns, socket) do

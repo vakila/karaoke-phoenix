@@ -13,9 +13,7 @@ defmodule Karaoke.Party do
   Starts a new party aka song queue.
   """
   def start_link(opts) do
-    {:ok, pid} = GenServer.start_link(__MODULE__, [], opts)
-    dbg(pid)
-    {:ok, pid}
+    GenServer.start_link(__MODULE__, [], opts)
   end
 
 
@@ -43,12 +41,12 @@ defmodule Karaoke.Party do
   end
 
   @doc """
-  Deletes song at `song_index` from `party` queue.
+  Deletes song with `song_id` from `party` queue.
 
-  Returns the current song at `song_index`, if one exists.
+  Returns the deleted song, if it exists.
   """
-  def delete_song(party, song_index) do
-    GenServer.call(party, {:delete, song_index})
+  def delete_song(party, song_id) do
+    GenServer.call(party, {:delete, song_id})
   end
 
 
@@ -103,9 +101,17 @@ defmodule Karaoke.Party do
     song.id == id
   end
 
+  def get_song_index(queue, %Song{} = song) do
+    Enum.find_index(queue, &match_song_id(&1, song.id))
+  end
+
+  def get_song_index(queue, song_id) do
+    Enum.find_index(queue, &match_song_id(&1, song_id))
+  end
+
   @impl true
   def handle_call({:edit, song}, _from, party) do
-    song_index = Enum.find_index(party.queue, &match_song_id(&1, song.id))
+    song_index = get_song_index(party.queue, song.id)
     new_queue = List.replace_at(party.queue, song_index, song)
     new_party = put_in(party.queue, new_queue)
     broadcast(party, {:updated, new_party})
@@ -124,7 +130,8 @@ defmodule Karaoke.Party do
 
 
   @impl true
-  def handle_call({:delete, song_index}, _from, party) do
+  def handle_call({:delete, song_id}, _from, party) do
+    song_index = get_song_index(party.queue, song_id)
     {_song, new_queue} = List.pop_at(party.queue, song_index)
     new_party = put_in(party.queue, new_queue)
     broadcast(party, {:updated, new_party})
