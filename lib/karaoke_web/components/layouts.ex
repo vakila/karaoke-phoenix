@@ -37,9 +37,9 @@ defmodule KaraokeWeb.Layouts do
     ~H"""
     <header class="navbar px-4 sm:px-6 lg:px-8">
       <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/recurse.svg"} class="hidden md:block p-2 w-10"/>
-          <h1 class="text-4xl font-bold" >Karaoke!</h1>
+        <a href="/" class="flex-1 flex w-fit items-center gap-6">
+          <img src={~p"/images/recurse.svg"} class="hidden md:block w-10 neon-sign"/>
+          <h1 class="text-4xl font-bold neon-text" >Karaoke</h1>
         </a>
       </div>
       <div class="flex-none">
@@ -48,10 +48,7 @@ defmodule KaraokeWeb.Layouts do
             <a href="https://karaoke.recurse.com/" class="btn btn-ghost">Website</a>
           </li> --%>
           <li>
-            <a href="https://github.com/vakila/karaoke-phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <.theme_toggle />
+            <a href="https://github.com/vakila/karaoke-phoenix" class="btn btn-ghost"><span class="neon-text">GitHub</span></a>
           </li>
           <%!-- <li>
             <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">

@@ -12,11 +12,13 @@ defmodule KaraokeWeb.SongLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <.header>
-        Songs!
+      <.header >
+        <h3 class="neon-text">Songs!</h3>
       </.header>
 
-      <div class="font-bold grid grid-cols-3 gap-2">
+      <div class="neon-box" >
+
+      <div class="font-bold grid grid-cols-3 gap-2 neon-text">
         <span>SONG TITLE</span>
         <span>SINGER</span>
         <span></span>
@@ -34,12 +36,18 @@ defmodule KaraokeWeb.SongLive.Index do
       </div>
 
       <div>
-       <.form for={@form} id="song-form-new" phx-change="validate" phx-submit="add_song" class="grid grid-cols-3 gap-2">
+       <.form for={@form} id="song-form-new" phx-change="validate" phx-submit="add_song" class="grid grid-cols-3 gap-2 py-2 items-start neon-text">
           <.input field={@form[:title]} type="text" placeholder="song title"  />
           <.input field={@form[:singer]} type="text" placeholder="singer name" />
-          <.button phx-disable-with="Saving..." variant="primary">
-          <.icon name="hero-plus" /> Add Song</.button>
+          <div class="fieldset mb2">
+          <span class="neon-btn">
+          <.button phx-disable-with="Saving..." variant="primary"  >
+            <.icon name="hero-plus" /> Add Song
+          </.button>
+          </span>
+          </div>
       </.form>
+      </div>
     </div>
 
     </Layouts.app>

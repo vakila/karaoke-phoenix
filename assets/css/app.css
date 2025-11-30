@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300&family=Source+Sans+3:wght@300&display=swap');
+
 /* See the Tailwind configuration guide for advanced usage
    https://tailwindcss.com/docs/configuration */
 
@@ -30,7 +32,7 @@
   --color-base-200: oklch(25.26% 0.014 253.1);
   --color-base-300: oklch(20.15% 0.012 254.09);
   --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(58% 0.233 277.117);
+  --color-primary:  hsl(269, 78%, 51%); /* oklch(58% 0.233 277.117); */
   --color-primary-content: oklch(96% 0.018 272.314);
   --color-secondary: oklch(58% 0.233 277.117);
   --color-secondary-content: oklch(96% 0.018 272.314);
@@ -38,7 +40,8 @@
   --color-accent-content: oklch(96% 0.016 293.756);
   --color-neutral: oklch(37% 0.044 257.287);
   --color-neutral-content: oklch(98% 0.003 247.858);
-  --color-info: oklch(58% 0.158 241.966);
+  --color-info: blah;
+  color: oklch(58% 0.158 241.966);
   --color-info-content: oklch(97% 0.013 236.62);
   --color-success: oklch(60% 0.118 184.704);
   --color-success-content: oklch(98% 0.014 180.72);
@@ -65,7 +68,7 @@
   --color-base-200: oklch(96% 0.001 286.375);
   --color-base-300: oklch(92% 0.004 286.32);
   --color-base-content: oklch(21% 0.006 285.885);
-  --color-primary: oklch(70% 0.213 47.604);
+  --color-primary: hsl(269, 78%, 51%); /* oklch(70% 0.213 47.604); */
   --color-primary-content: oklch(98% 0.016 73.684);
   --color-secondary: oklch(55% 0.027 264.364);
   --color-secondary-content: oklch(98% 0.002 247.839);
@@ -103,3 +106,106 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+@theme {  
+  --color-neon-purple: hsl(269, 78%, 51%); /* #7f21e4 */
+  --color-neon-pink: #ff00ff;
+  --color-neon-dark-bg:  hsl(213, 19%, 9%);
+  --color-neon-green: #3dc06c;
+
+  --color-primary: hsl(269, 78%, 51%);
+
+  --box-shadow-neon-pink:     
+    0 0 10px #ff00ff, /* Outer glow */
+    0 0 20px #ff00ff, 
+    0 0 40px #ff00ff, 
+    inset 0 0 10px #ff00ff, /* Inner glow */
+    inset 0 0 20px #ff00ff;
+
+  --box-shadow-neon-green:
+    0 0 5px #3dc06c,
+    0 0 10px #3dc06c,
+    0 0 20px #3dc06c;
+    /* inset 0 0 10px #fff,
+    inset 0 0 20px #fff;  */
+  
+  --box-shadow-neon-white:     
+    0 0 10px #fff, /* Outer glow */
+    0 0 20px #fff, 
+    0 0 40px #fff;
+    /* inset 0 0 10px #fff, /* Inner glow */
+    /* inset 0 0 20px #fff; */ 
+
+  --box-shadow-neon-purple:     
+    0 0 5px #bc13fe, /* Outer glow */
+    0 0 10px #bc13fe, 
+    0 0 20px #bc13fe;
+    /* inset 0 0 10px #bc13fe, 
+    inset 0 0 20px #bc13fe; */
+
+
+
+
+  --text-shadow-neon-purple: 
+    0 0 5px #bc13fe,
+    0 0 10px #bc13fe,
+    0 0 21px #fff;
+    /* 0 0 42px #bc13fe,
+    0 0 82px #bc13fe,
+    0 0 92px #bc13fe,
+    0 0 102px #bc13fe,
+    0 0 151px #bc13fe; */
+    /* 0 0 7px #bc13fe; hsl(269, 78%, 51%), */
+    /* 0 0 10px #fff; */
+    /* 0 0 21px #fff,
+    0 0 42px #0fa,
+    0 0 82px #0fa,
+    0 0 92px #0fa,
+    0 0 102px #0fa,
+    0 0 151px #0fa; */
+
+    --text-shadow-neon-pink: 
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      0 0 42px #f09,
+      0 0 82px #f09,
+      0 0 92px #f09,
+      0 0 102px #f09,
+      0 0 151px #f09;
+}
+
+@layer base {
+ html {
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+ }
+
+ body {
+  color: white; /* var(--color-neon-purple); */
+  background-color: var(--color-neon-dark-bg);
+ }
+ .neon-text {
+  text-transform: uppercase;
+  text-shadow: var(--text-shadow-neon-purple);
+ }
+ .neon-box {
+  padding: 40px;
+  border-radius: 15px;
+  border: 1px solid var(--color-neon-pink);
+  color: white;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+  box-shadow: var(--box-shadow-neon-pink);
+ }
+ .neon-sign {
+  background-color: white;
+  box-shadow: var(--box-shadow-neon-white);
+ }
+ .neon-button {
+  box-shadow: var(--box-shadow-neon-purple);
+ }
+
+}

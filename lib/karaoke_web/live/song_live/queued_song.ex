@@ -8,8 +8,8 @@ defmodule KaraokeWeb.QueuedSongLive do
   def render(assigns) do
     if assigns.editing do
     ~H"""
-    <div id={@song.id} class="flex">
-    <.form for={@form} id="edit-song-form" phx-target={@myself} phx-submit="save" class="grid grid-cols-3 gap-2 py-2">
+    <div id={@song.id} class="flex py2">
+    <.form for={@form} id="edit-song-form" phx-target={@myself} phx-submit="save" class="grid grid-cols-3 gap-2 py-4">
           <%!-- <span>{@song.id}</span> --%>
           <.input field={@form[:title]} id={@song.id <> "-title"} type="text" />
           <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" />
@@ -19,7 +19,7 @@ defmodule KaraokeWeb.QueuedSongLive do
     """
     else
       ~H"""
-      <div id={@song.id} class="grid grid-cols-4 gap-2 py-2">
+      <div id={@song.id} class="grid grid-cols-4 gap-2 py-4">
         <%!-- <span>{@song.id}</span> --%>
         <span>{@song.title}</span>
         <span>{@song.singer}</span>
