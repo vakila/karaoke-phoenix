@@ -8,24 +8,35 @@ defmodule KaraokeWeb.QueuedSongLive do
   def render(assigns) do
     if assigns.editing do
     ~H"""
-    <div id={@song.id} class="flex py2">
-    <.form for={@form} id="edit-song-form" phx-target={@myself} phx-submit="save" class="grid grid-cols-3 gap-2 py-4">
+    <div id={@song.id} >
+    <.form for={@form} id="edit-song-form" phx-target={@myself} phx-submit="save" class="grid grid-cols-3 gap-2 py-4 items-center">
           <%!-- <span>{@song.id}</span> --%>
-          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" />
+          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title"   />
           <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" />
-          <.button>Save</.button>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+          <.button type="submit" variant="primary">Save</.button>
+          <.button>Cancel</.button>
+          </div>
       </.form>
     </div>
     """
     else
       ~H"""
-      <div id={@song.id} class="grid grid-cols-4 gap-2 py-4">
+      <div id={@song.id} class="grid grid-cols-3 gap-2 py-4 text-left">
         <%!-- <span>{@song.id}</span> --%>
-        <span>{@song.title}</span>
-        <span>{@song.singer}</span>
+        <p class="text-xl neon-text">{@song.title}</p>
+        <p class="text-xl neon-text">{@song.singer}</p>
         <%!-- <span>Editing? {@editing}</span> --%>
-        <.button variant="primary" phx-click="edit" phx-target={@myself}>Edit</.button>
-        <.button variant="primary" phx-click="delete" phx-target={@myself}>Delete</.button>
+        <div class="grid grid-cols-2 gap-2 mb-2">
+        <.button variant="primary" phx-click="edit" phx-target={@myself}>
+           <.icon name="hero-pencil" />
+           <span class="hidden md:inline">Edit</span>
+        </.button>
+        <.button variant="primary" phx-click="delete" data-confirm="Delete this song?" phx-target={@myself}>
+          <.icon name="hero-trash" />
+          <span class="hidden md:inline">Delete</span>
+        </.button>
+        </div>
       </div>
       """
 
@@ -54,8 +65,9 @@ defmodule KaraokeWeb.QueuedSongLive do
 
     if !changeset.valid? do
       {:noreply, socket
-        |> assign(:form, to_form(changeset, action: :validate)
-        |> put_flash(:error, "Invalid song data"))}
+        |> assign(:form, to_form(changeset, action: :validate))
+        # |> put_flash(:error, "Invalid song data"))
+      }
 
     else
       new_song = Ecto.Changeset.apply_changes(changeset)
@@ -65,7 +77,7 @@ defmodule KaraokeWeb.QueuedSongLive do
       {:noreply, socket
         |> assign(editing: false)
         |> assign(songs: new_queue)
-        |> put_flash(:info, "Song added to queue")
+        # |> put_flash(:info, "Song added to queue")
         |> assign(form: to_form(%{}, action: :new))}
     end
 

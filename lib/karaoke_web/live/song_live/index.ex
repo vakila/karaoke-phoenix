@@ -21,10 +21,10 @@ defmodule KaraokeWeb.SongLive.Index do
       <fieldset class="fieldset rounded-box border p-4 neon-box neon-box-purple" >
       <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
 
-      <div class="font-bold grid grid-cols-4 gap-2 neon-text">
-        <span>SONG TITLE</span>
-        <span>SINGER</span>
-        <span></span>
+      <div class="font-bold grid grid-cols-3 gap-2">
+        <p class="text-lg border-b">SONG</p>
+        <p class="text-lg border-b">SINGER</p>
+        <div class=""></div>
       </div>
 
 
@@ -42,11 +42,11 @@ defmodule KaraokeWeb.SongLive.Index do
 
       <fieldset class="fieldset neon-box neon-box-blue rounded-box border p-4">
        <legend class="fieldset-legend neon-text text-xl">Add song</legend>
-       <.form for={@form} id="song-form-new" phx-change="validate" phx-submit="add_song" class="grid grid-cols-3 gap-2 py-2 items-start neon-text">
+       <.form for={@form} id="song-form-new" phx-submit="add_song" class="grid grid-cols-3 gap-2 py-2 items-start ">
           <.input field={@form[:title]} type="text" placeholder="song title"  />
           <.input field={@form[:singer]} type="text" placeholder="singer name" />
           <div class="fieldset mb2">
-          <.button variant="neon-secondary" phx-disable-with="Saving..."  >
+          <.button variant="neon-secondary" phx-disable-with="Saving..." disabled={} >
             <.icon name="hero-plus" /> <span class="hidden sm:inline"> Add <span class="hidden md:inline">to Queue</span></span>
           </.button>
           </div>
@@ -80,7 +80,7 @@ defmodule KaraokeWeb.SongLive.Index do
     end
 
     {:ok, socket
-      |> assign(:page_title, "Karaoke Songs")
+      |> assign(:page_title, "Karaoke Party")
       |> assign(songs: [])
       |> assign(form: to_form(%{}, action: :validate))}
 
@@ -96,15 +96,17 @@ defmodule KaraokeWeb.SongLive.Index do
 
   @impl true
   def handle_event("validate", %{"singer" => singer, "title" => title}, socket) do
-    dbg(singer)
-    dbg(title)
     changeset = Song.to_changeset(%{singer: singer, title: title})
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
   @impl true
   def handle_event("add_song", %{"song" => song}, socket) do
-    %{"title" => title, "singer" => singer} = song
+    handle_event("add_song",  %{"title" => song["title"], "singer" => song["singer"]}, socket)
+  end
+
+  @impl true
+  def handle_event("add_song", %{"title" => title, "singer" => singer}, socket) do
 
     this_song_id = "#{singer}-#{title}"
     changeset = Song.to_changeset(%{title: title, singer: singer, id: this_song_id})
@@ -117,7 +119,7 @@ defmodule KaraokeWeb.SongLive.Index do
 
       {:noreply, socket
         |> assign(songs: new_queue)
-        |> put_flash(:info, "Song added to queue")
+        # |> put_flash(:info, "Song added to queue")
         |> assign(form: to_form(%{}, action: :new))}
     end
 

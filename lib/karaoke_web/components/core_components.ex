@@ -56,7 +56,7 @@ defmodule KaraokeWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-bottom toast-end z-50"
+      class="toast toast-bottom toast-end toast-outline z-50"
       {@rest}
     >
       <div class={[
@@ -418,7 +418,7 @@ defmodule KaraokeWeb.CoreComponents do
       <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
   """
   attr :name, :string, required: true
-  attr :class, :string, default: "size-4"
+  attr :class, :string, default: "w-4 h-4"
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
