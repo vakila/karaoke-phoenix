@@ -12,17 +12,21 @@ defmodule KaraokeWeb.SongLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <.header >
-        <h3 class="neon-text">Songs!</h3>
-      </.header>
 
-      <div class="neon-box" >
+      <fieldset class="fieldset neon-box neon-box-pink rounded-box border p-4">
+      <legend class="fieldset-legend neon-text uppercase text-3xl">Now Playing</legend>
+      <span class="neon-text text-xl">SINGER singing SONG</span>
+      </fieldset>
 
-      <div class="font-bold grid grid-cols-3 gap-2 neon-text">
+      <fieldset class="fieldset rounded-box border p-4 neon-box neon-box-purple" >
+      <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
+
+      <div class="font-bold grid grid-cols-4 gap-2 neon-text">
         <span>SONG TITLE</span>
         <span>SINGER</span>
         <span></span>
       </div>
+
 
       <div id="queued_songs" >
         <.live_component
@@ -34,21 +38,21 @@ defmodule KaraokeWeb.SongLive.Index do
           editing={false}
           />
       </div>
+      </fieldset>
 
-      <div>
+      <fieldset class="fieldset neon-box neon-box-blue rounded-box border p-4">
+       <legend class="fieldset-legend neon-text text-xl">Add song</legend>
        <.form for={@form} id="song-form-new" phx-change="validate" phx-submit="add_song" class="grid grid-cols-3 gap-2 py-2 items-start neon-text">
           <.input field={@form[:title]} type="text" placeholder="song title"  />
           <.input field={@form[:singer]} type="text" placeholder="singer name" />
           <div class="fieldset mb2">
-          <span class="neon-btn">
-          <.button phx-disable-with="Saving..." variant="primary"  >
-            <.icon name="hero-plus" /> Add Song
+          <.button variant="neon-secondary" phx-disable-with="Saving..."  >
+            <.icon name="hero-plus" /> <span class="hidden sm:inline"> Add <span class="hidden md:inline">to Queue</span></span>
           </.button>
-          </span>
           </div>
       </.form>
-      </div>
-    </div>
+      </fieldset>
+
 
     </Layouts.app>
     """

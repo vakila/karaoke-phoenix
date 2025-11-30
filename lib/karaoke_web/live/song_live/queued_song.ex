@@ -24,8 +24,8 @@ defmodule KaraokeWeb.QueuedSongLive do
         <span>{@song.title}</span>
         <span>{@song.singer}</span>
         <%!-- <span>Editing? {@editing}</span> --%>
-        <.button phx-click="edit" phx-target={@myself}>Edit</.button>
-        <.button phx-click="delete" phx-target={@myself}>Delete</.button>
+        <.button variant="primary" phx-click="edit" phx-target={@myself}>Edit</.button>
+        <.button variant="primary" phx-click="delete" phx-target={@myself}>Delete</.button>
       </div>
       """
 

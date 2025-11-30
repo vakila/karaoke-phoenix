@@ -34,7 +34,7 @@
   --color-base-content: oklch(97.807% 0.029 256.847);
   --color-primary:  hsl(269, 78%, 51%); /* oklch(58% 0.233 277.117); */
   --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(58% 0.233 277.117);
+  --color-secondary: hsl(206, 93%, 35%); /* oklch(58% 0.233 277.117); */
   --color-secondary-content: oklch(96% 0.018 272.314);
   --color-accent: oklch(60% 0.25 292.717);
   --color-accent-content: oklch(96% 0.016 293.756);
@@ -112,8 +112,8 @@
   --color-neon-pink: #ff00ff;
   --color-neon-dark-bg:  hsl(213, 19%, 9%);
   --color-neon-green: #3dc06c;
+  --color-neon-blue: hsl(206, 93%, 50%); /* #098ff6; original: #3c89c3; */
 
-  --color-primary: hsl(269, 78%, 51%);
 
   --box-shadow-neon-pink:     
     0 0 10px #ff00ff, /* Outer glow */
@@ -122,34 +122,59 @@
     inset 0 0 10px #ff00ff, /* Inner glow */
     inset 0 0 20px #ff00ff;
 
+    
+  --box-shadow-neon-blue:     
+    0 0 10px #098ff6,
+    0 0 20px #098ff6, 
+    0 0 40px #098ff6, 
+    inset 0 0 10px #098ff6, 
+    inset 0 0 20px #098ff6;
+
   --box-shadow-neon-green:
     0 0 5px #3dc06c,
     0 0 10px #3dc06c,
-    0 0 20px #3dc06c;
-    /* inset 0 0 10px #fff,
-    inset 0 0 20px #fff;  */
+    0 0 20px #3dc06c,
+    inset 0 0 10px #fff,
+    inset 0 0 20px #fff; 
   
   --box-shadow-neon-white:     
-    0 0 10px #fff, /* Outer glow */
+    0 0 10px #fff, 
     0 0 20px #fff, 
-    0 0 40px #fff;
-    /* inset 0 0 10px #fff, /* Inner glow */
-    /* inset 0 0 20px #fff; */ 
+    0 0 40px #fff,
+    inset 0 0 10px #fff, 
+    inset 0 0 20px #fff; 
 
   --box-shadow-neon-purple:     
     0 0 5px #bc13fe, /* Outer glow */
     0 0 10px #bc13fe, 
-    0 0 20px #bc13fe;
-    /* inset 0 0 10px #bc13fe, 
-    inset 0 0 20px #bc13fe; */
+    0 0 20px #bc13fe,
+    inset 0 0 10px #bc13fe, 
+    inset 0 0 20px #bc13fe;
+
+  --box-shadow-neon-current:     
+    0 0 5px currentcolor, 
+    0 0 10px currentcolor,
+    0 0 25px currentcolor;
+    /* inset 0 0 5px currentcolor,  */
+    /* inset 0 0 10px currentcolor;  */
 
 
 
+  --text-shadow-neon-white:
+    /* 0 0 3px #fff, */
+    0 0 5px #fff,
+    0 0 7px #fff;
+    /* 0 0 20px #fff; */
+  
+  --text-shadow-neon-current:
+    /* 0 0 5px currentcolor, */
+    0 0 10px currentcolor,
+    0 0 20px currentcolor;
 
   --text-shadow-neon-purple: 
     0 0 5px #bc13fe,
     0 0 10px #bc13fe,
-    0 0 21px #fff;
+    0 0 21px #bc13fe;
     /* 0 0 42px #bc13fe,
     0 0 82px #bc13fe,
     0 0 92px #bc13fe,
@@ -175,12 +200,30 @@
       0 0 151px #f09;
 }
 
+@utility btn {
+  &:hover, &:focus-visible {
+    box-shadow: var(--box-shadow-neon-current);
+    text-shadow: var(--text-shadow-neon-current);
+  }
+  &:focus-visible {
+    outline-color: white;
+  }
+}
+
+@utility input {
+  &:focus-visible {
+    box-shadow: var(--box-shadow-neon-current);
+    outline-color: white;
+  }
+}
+
 @layer base {
  html {
   font-family: "Quicksand", sans-serif;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
+  font-size: larger;
  }
 
  body {
@@ -188,24 +231,45 @@
   background-color: var(--color-neon-dark-bg);
  }
  .neon-text {
-  text-transform: uppercase;
-  text-shadow: var(--text-shadow-neon-purple);
+   text-shadow: var(--text-shadow-neon-white);  
+  }
+  
+ h1.neon-text, legend.neon-text {
+    text-transform: uppercase;
+ }
+
+ .neon-text-white {
+  text-shadow: var(--text-shadow-neon-white);
  }
  .neon-box {
   padding: 40px;
   border-radius: 15px;
-  border: 1px solid var(--color-neon-pink);
+  /* border: 1px solid var(--color-neon-pink); */
   color: white;
   text-align: center;
   transition: box-shadow 0.3s ease;
+ }
+ .neon-box-blue {
+  box-shadow: var(--box-shadow-neon-blue);
+ }
+ .neon-box-pink {
   box-shadow: var(--box-shadow-neon-pink);
+ }
+ .neon-box-purple {
+  box-shadow: var(--box-shadow-neon-purple);
  }
  .neon-sign {
   background-color: white;
   box-shadow: var(--box-shadow-neon-white);
  }
- .neon-button {
-  box-shadow: var(--box-shadow-neon-purple);
+ .neon-btn, .btn-outline {
+  /* padding: 0px;
+  margin: 0px; */
+  --btn-shadow: var(--box-shadow-neon-purple);
+ }
+
+ .neon-btn:hover {
+  --btn-shadow: var(--box-shadow-neon-white);
  }
 
 }

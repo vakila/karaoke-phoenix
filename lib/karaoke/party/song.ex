@@ -21,6 +21,10 @@ defmodule Karaoke.Party.Song do
   end
 
 
+  @spec validate(
+          :invalid
+          | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
+        ) :: {:ok, Ecto.Changeset.t()}
   def validate(songData) do
     changeset = to_changeset(songData)
     if (!changeset.valid?) do

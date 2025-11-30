@@ -56,7 +56,7 @@ defmodule KaraokeWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class="toast toast-bottom toast-end z-50"
       {@rest}
     >
       <div class={[
@@ -90,11 +90,18 @@ defmodule KaraokeWeb.CoreComponents do
   """
   attr :rest, :global, include: ~w(href navigate patch method download name value disabled)
   attr :class, :string
-  attr :variant, :string, values: ~w(primary)
+  attr :variant, :string, values: ~w(primary secondary neon neon-secondary)
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
+    variants = %{
+      nil => "btn-primary btn-soft",
+      "primary" => "btn-primary",
+      "secondary" => "btn-secondary",
+      "neon" => "btn-primary neon-btn",
+      "neon-secondary" => "btn-secondary neon-btn"
+    }
+
 
     assigns =
       assign_new(assigns, :class, fn ->

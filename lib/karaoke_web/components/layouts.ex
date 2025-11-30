@@ -35,20 +35,20 @@ defmodule KaraokeWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
+    <header class="navbar pt-6 px-4 sm:px-6 lg:px-8 flex-wrap sm:flex-nowrap">
       <div class="flex-1">
         <a href="/" class="flex-1 flex w-fit items-center gap-6">
-          <img src={~p"/images/recurse.svg"} class="hidden md:block w-10 neon-sign"/>
-          <h1 class="text-4xl font-bold neon-text" >Karaoke</h1>
+          <%!-- <img src={~p"/images/recurse.svg"} class="hidden md:block w-8 neon-sign" alt="Recurse Center Logo"/> --%>
+          <h1 class="text-4xl md:text-5xl font-bold neon-text tracking-wide" >Karaoke!</h1>
         </a>
       </div>
-      <div class="flex-none">
-        <ul class="flex flex-column px-1 space-x-4 items-center">
-          <%!-- <li>
-            <a href="https://karaoke.recurse.com/" class="btn btn-ghost">Website</a>
-          </li> --%>
+      <div class="xs:flex-none">
+        <ul class="flex flex-wrap px-1 space-x-4 items-center">
           <li>
-            <a href="https://github.com/vakila/karaoke-phoenix" class="btn btn-ghost"><span class="neon-text">GitHub</span></a>
+            <a href="https://karaoke.recurse.com/" class="neon-text"><span class="neon-text">karaoke.recurse.com</span></a>
+          </li>
+          <li>
+            <a href="https://github.com/vakila/karaoke-phoenix" role="button" class="btn btn-primary neon-btn" ><span class="text-white neon-text uppercase">GitHub</span></a>
           </li>
           <%!-- <li>
             <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
