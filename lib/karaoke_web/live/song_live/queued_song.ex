@@ -8,33 +8,39 @@ defmodule KaraokeWeb.QueuedSongLive do
   def render(assigns) do
 
       ~H"""
-      <div id={@song.id} >
+      <div id={@song.id} class="w-full py-4">
 
       <%!-- Edit Song Form (if editing) --%>
-      <.form :if={assigns.editing} id={"edit-queued-" <> @song.id} for={@form}  phx-target={@myself} phx-submit="save" class="edit-queued grid xs:grid-cols-2 sm:grid-cols-3" >
+      <.form :if={assigns.editing} id={"edit-queued-" <> @song.id} for={@form}  phx-target={@myself} phx-submit="save" class="edit-queued w-full grid sm:grid-cols-3 items-center gap-2" >
           <%!-- <span>{@song.id}</span> --%>
           <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" />
           <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title"   />
-          <div class="grid grid-cols-2 xs:grid-cols-3 gap-2 mb-2">
-          <.button type="submit" variant="primary">Save</.button>
-          <.button>Cancel</.button>
+          <div class="grid xs:grid-cols-2 gap-2 mb-2">
+          <.button type="submit" variant="primary">
+            <.icon name="hero-check" />
+            <span class="hidden xxs:max-sm:inline md:inline uppercase">Save</span>
+          </.button>
+          <.button >
+            <.icon name="hero-x-mark" />
+            <span class="hidden xxs:max-xs:inline uppercase">Cancel</span>
+          </.button>
           </div>
       </.form>
 
       <%!-- Song Info + Actions (if not editing) --%>
       <div :if={!assigns.editing} id={"view-queued-" <> @song.id}
-        class="w-full flex flex-col xs:flex-row gap-2 py-4">
+        class="view-queued w-full grid sm:grid-cols-3 gap-2">
           <span class="text-xl uppercase neon-text">{@song.singer} </span>
           <span class="text-lg">{@song.title}</span>
 
-        <div class="grid grid-cols-1 xs:grid-cols-2 gap-2 mb-2">
+        <div class="grid xs:grid-cols-2 gap-2 mb-2">
           <.button variant="primary" phx-click="edit" phx-target={@myself}>
-            <.icon name="hero-pencil-solid" />
-            <span class="hidden xs:inline sm:hidden md:inline">Edit</span>
+            <.icon name="hero-pencil" />
+            <span class="hidden xxs:max-sm:inline md:inline uppercase">Edit</span>
           </.button>
           <.button variant="primary" phx-click="delete" data-confirm="Delete this song?" phx-target={@myself}>
-            <.icon name="hero-trash-solid" />
-            <span class="hidden">Delete</span>
+            <.icon name="hero-trash" />
+            <span class="hidden xxs:max-sm:inline md:inline uppercase">Delete</span>
           </.button>
         </div>
       </div>

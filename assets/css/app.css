@@ -73,6 +73,7 @@
 /* This file is for your main application CSS */
 
 @theme { 
+  --breakpoint-xxs: 16rem; /* 256px */
   --breakpoint-xs: 25rem; /* 400px */
   
   --color-neon-dark-bg:  hsl(213, 19%, 9%);
@@ -186,6 +187,15 @@
   }
 }
 
+@utility divider {
+
+
+  &::before, &::after {
+    box-shadow: var(--box-shadow-neon-current);
+    background-color: white; 
+  }
+}
+
 @layer base {
  html {
   font-family: "Quicksand", sans-serif;
@@ -235,6 +245,17 @@
  .neon-box-purple {
   box-shadow: var(--box-shadow-neon-purple);
  }
+
+ .neon-svg {
+  filter: url("/images/filters.svg#neon");
+ }
+
+.button:hover .neon-svg, a:hover .neon-svg, :focus-within .neon-svg {
+  filter: url("/images/filters.svg#neon-highlight");
+}
+
+
+
  .neon-sign {
   background-color: white;
   box-shadow: var(--box-shadow-neon-white);

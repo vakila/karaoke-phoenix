@@ -15,14 +15,15 @@ defmodule KaraokeWeb.SongLive.Index do
 
       <%!-- NOW PLAYING --%>
 
-      <fieldset class="fieldset neon-box neon-box-pink rounded-box border p-4">
-      <legend class="fieldset-legend neon-text uppercase text-3xl">Now Playing</legend>
-      <span class="neon-text text-xl">SINGER singing TITLE</span>
+      <fieldset id="now-playing" class="fieldset neon-box neon-box-pink rounded-box border p-4">
+      <legend class="fieldset-legend neon-text uppercase text-xl md:text-3xl ">Now Playing</legend>
+      <p class="neon-text text-3xl uppercase">Singer</p>
+      <p class="text-xl pb-4">name of the song</p>
       </fieldset>
 
       <%!-- QUEUE --%>
 
-      <fieldset class="fieldset rounded-box border p-4 neon-box neon-box-purple" >
+      <fieldset id="song-queue" class="fieldset rounded-box border p-4 neon-box neon-box-purple" >
       <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
 
 
@@ -36,14 +37,17 @@ defmodule KaraokeWeb.SongLive.Index do
 
       </fieldset>
 
-      <fieldset class="fieldset neon-box neon-box-blue rounded-box border p-4">
+      <fieldset id="add-song" class="fieldset neon-box neon-box-blue rounded-box border p-4">
        <legend class="fieldset-legend neon-text text-xl">Add song</legend>
-       <.form for={@form} id="song-form-new" phx-submit="add_song" class="grid grid-cols-3 gap-2 py-2 items-start ">
+       <.form for={@form} id="song-form-new" phx-submit="add_song" class="grid sm:grid-cols-3 gap-2 py-2 items-start ">
           <.input field={@form[:title]} type="text" placeholder="song title"  />
           <.input field={@form[:singer]} type="text" placeholder="singer name" />
           <div class="fieldset mb2">
-          <.button variant="neon-secondary" phx-disable-with="Saving..." disabled={} >
-            <.icon name="hero-plus" /> <span class="hidden sm:inline"> Add <span class="hidden md:inline">to Queue</span></span>
+          <.button variant="neon-secondary" title="Add song to queue" phx-disable-with="Saving..." disabled={} >
+            <.icon name="hero-plus" />
+            <span class="hidden xxs:inline sm:max-md:hidden uppercase"> Add
+              <span class="hidden xs:inline md:max-lg:hidden">to Queue</span>
+            </span>
           </.button>
           </div>
       </.form>

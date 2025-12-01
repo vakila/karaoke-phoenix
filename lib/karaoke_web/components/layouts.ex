@@ -5,6 +5,8 @@ defmodule KaraokeWeb.Layouts do
   """
   use KaraokeWeb, :html
 
+  alias KaraokeWeb.CoreComponents
+
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
@@ -35,35 +37,49 @@ defmodule KaraokeWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar pt-6 px-4 sm:px-6 lg:px-8 flex-wrap sm:flex-nowrap">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-6">
-          <%!-- <img src={~p"/images/recurse.svg"} class="hidden md:block w-8 neon-sign" alt="Recurse Center Logo"/> --%>
-          <h1 class="text-4xl md:text-5xl font-bold neon-text tracking-wide" >Karaoke!</h1>
-        </a>
-      </div>
-      <div class="xs:flex-none">
-        <ul class="flex flex-wrap px-1 space-x-4 items-center">
-          <li>
-            <a href="https://karaoke.recurse.com/" class="neon-text"><span class="neon-text">karaoke.recurse.com</span></a>
-          </li>
-          <li>
-            <a href="https://github.com/vakila/karaoke-phoenix" role="button" class="btn btn-primary neon-btn" ><span class="text-white neon-text uppercase">GitHub</span></a>
-          </li>
-          <%!-- <li>
-            <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li> --%>
-        </ul>
-      </div>
-    </header>
+    <div class="sm:hidden w-full divider pt-2 px-4 sm:px-6 lg:px-8 text-white" />
+    <header class="navbar py-6 sm:pt-12 px-4 sm:px-6 lg:px-8 flex-wrap w-full items-center justify-center">
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
+          <h1 class="w-full text-4xl xs:text-5xl md:text-6xl font-bold neon-text text-white tracking-wide  divider neon-divider"><span>Karaoke!</span></h1>
+
+    </header>
+    <div class="sm:hidden w-full divider pb-2 px-4 sm:px-6 lg:px-8 text-white" />
+
+    <main class="px-4 py-4 md:py-10 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-2xl space-y-4">
         {render_slot(@inner_block)}
       </div>
     </main>
+
+    <div class="sm:hidden w-full divider p-4 px-4 sm:px-6 lg:px-8 text-white" />
+
+    <footer class="footer flex justify-center items-center gap-2 py-6 px-4 sm:px-6 lg:px-8 w-full text-white divider neon-divider">
+
+      <div class="flex flex-row justify-center items-center gap-1 mx-2">
+
+        <a href="https://github.com/vakila/karaoke-phoenix" title="github.com/vakila/karaoke-phoenix" target="_blank">
+          <.icon name="hero-code-bracket" />
+        </a>
+
+        <%!-- <p>Copyright © {new Date().getFullYear()} - All right reserved</p> --%>
+        <p class="flex">
+          &nbsp;made
+          <span class="hidden xs:inline">
+          &nbsp;with <.icon name="hero-heart" />
+          </span>
+          &nbsp;at&nbsp;
+        </p>
+
+        <a class="shrink-0 flex" href="https://recurse.com" title="recurse.com" target="_blank">
+          <%!-- <span class="">RC</span> --%>
+          <span class="neon-svg">
+            <img src={~p"/images/recurse.svg"} class=" h-6 neon-svg" alt="Recurse Center Logo" />
+          </span>
+        </a>
+      </div>
+    </footer>
+
+    <div class="sm:hidden w-full divider p-4 px-4 sm:px-6 lg:px-8 text-white" />
 
     <.flash_group flash={@flash} />
     """

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="neon">
+            <feGaussianBlur stdDeviation="1" in="SourceGraphic" result="blur"></feGaussianBlur>
+            <feGaussianBlur stdDeviation=".5" in="blur" result="blur1"></feGaussianBlur>
+            <feGaussianBlur stdDeviation=".05" in="blur" result="blur2"></feGaussianBlur>
+            <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="neon-highlight">
+            <feGaussianBlur stdDeviation="1.5" in="SourceGraphic" result="blur"></feGaussianBlur>
+            <feGaussianBlur stdDeviation="0.5" in="blur" result="blur1"></feGaussianBlur>
+            <feGaussianBlur stdDeviation=".05" in="blurx" result="blur2"></feGaussianBlur>
+            <feGaussianBlur stdDeviation="7" in="SourceGraphic" result="blurx"></feGaussianBlur>
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blurx" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+</svg>

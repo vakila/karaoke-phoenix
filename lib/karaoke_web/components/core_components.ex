@@ -418,11 +418,13 @@ defmodule KaraokeWeb.CoreComponents do
       <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
   """
   attr :name, :string, required: true
-  attr :class, :string, default: "w-4 h-4"
+  attr :class, :string, default: "size-6"
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
+    <span class="neon-svg">
     <span class={[@name, @class]} />
+    </span>
     """
   end
 
