@@ -248,11 +248,17 @@
 
  .neon-svg {
   filter: url("/images/filters.svg#neon");
+
+  &:hover, &:focus {
+    filter: url("/images/filters.svg#neon-highlight");
+  }
  }
 
-.button:hover .neon-svg, a:hover .neon-svg, :focus-within .neon-svg {
+
+ .btn:hover  .neon-svg, a:hover  .neon-svg, :focus-within .neon-svg {
   filter: url("/images/filters.svg#neon-highlight");
-}
+ }
+
 
 
 
