@@ -72,7 +72,9 @@
 
 /* This file is for your main application CSS */
 
-@theme {  
+@theme { 
+  --breakpoint-xs: 25rem; /* 400px */
+  
   --color-neon-dark-bg:  hsl(213, 19%, 9%);
   --root-bg: hsl(213, 19%, 9%);
   --color-neon-purple: hsl(269, 78%, 51%); /* #7f21e4 */
@@ -181,10 +183,7 @@
   &:focus-visible {
     box-shadow: var(--box-shadow-neon-current);
     outline-color: white;
-    
   }
-  
-  
 }
 
 @layer base {
@@ -204,8 +203,9 @@
 
  a {
   color: var(--color-base-content);
-}
+ }
 
+ 
 
  .neon-text {
    text-shadow: var(--text-shadow-neon-white);  

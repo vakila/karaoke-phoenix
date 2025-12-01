@@ -6,43 +6,45 @@ defmodule KaraokeWeb.QueuedSongLive do
 
   @impl true
   def render(assigns) do
-    if assigns.editing do
-    ~H"""
-    <div id={@song.id} >
-    <.form for={@form} id="edit-song-form" phx-target={@myself} phx-submit="save" class="grid grid-cols-3 gap-2 py-4 items-center">
+
+      ~H"""
+      <div id={@song.id} >
+
+      <%!-- Edit Song Form (if editing) --%>
+      <.form :if={assigns.editing} id={"edit-queued-" <> @song.id} for={@form}  phx-target={@myself} phx-submit="save" class="edit-queued grid xs:grid-cols-2 sm:grid-cols-3" >
           <%!-- <span>{@song.id}</span> --%>
-          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title"   />
           <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" />
-          <div class="grid grid-cols-2 gap-2 mb-2">
+          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title"   />
+          <div class="grid grid-cols-2 xs:grid-cols-3 gap-2 mb-2">
           <.button type="submit" variant="primary">Save</.button>
           <.button>Cancel</.button>
           </div>
       </.form>
-    </div>
-    """
-    else
-      ~H"""
-      <div id={@song.id} class="grid grid-cols-3 gap-2 py-4 text-left">
-        <%!-- <span>{@song.id}</span> --%>
-        <p class="text-xl neon-text">{@song.title}</p>
-        <p class="text-xl neon-text">{@song.singer}</p>
-        <%!-- <span>Editing? {@editing}</span> --%>
-        <div class="grid grid-cols-2 gap-2 mb-2">
-        <.button variant="primary" phx-click="edit" phx-target={@myself}>
-           <.icon name="hero-pencil" />
-           <span class="hidden md:inline">Edit</span>
-        </.button>
-        <.button variant="primary" phx-click="delete" data-confirm="Delete this song?" phx-target={@myself}>
-          <.icon name="hero-trash" />
-          <span class="hidden md:inline">Delete</span>
-        </.button>
+
+      <%!-- Song Info + Actions (if not editing) --%>
+      <div :if={!assigns.editing} id={"view-queued-" <> @song.id}
+        class="w-full flex flex-col xs:flex-row gap-2 py-4">
+          <span class="text-xl uppercase neon-text">{@song.singer} </span>
+          <span class="text-lg">{@song.title}</span>
+
+        <div class="grid grid-cols-1 xs:grid-cols-2 gap-2 mb-2">
+          <.button variant="primary" phx-click="edit" phx-target={@myself}>
+            <.icon name="hero-pencil-solid" />
+            <span class="hidden xs:inline sm:hidden md:inline">Edit</span>
+          </.button>
+          <.button variant="primary" phx-click="delete" data-confirm="Delete this song?" phx-target={@myself}>
+            <.icon name="hero-trash-solid" />
+            <span class="hidden">Delete</span>
+          </.button>
         </div>
+      </div>
+
+
       </div>
       """
 
-    end
-
   end
+
 
   @impl true
   def handle_event("edit", _params, socket) do

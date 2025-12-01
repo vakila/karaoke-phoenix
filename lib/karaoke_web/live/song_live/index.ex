@@ -13,31 +13,27 @@ defmodule KaraokeWeb.SongLive.Index do
     ~H"""
     <Layouts.app flash={@flash}>
 
+      <%!-- NOW PLAYING --%>
+
       <fieldset class="fieldset neon-box neon-box-pink rounded-box border p-4">
       <legend class="fieldset-legend neon-text uppercase text-3xl">Now Playing</legend>
-      <span class="neon-text text-xl">SINGER singing SONG</span>
+      <span class="neon-text text-xl">SINGER singing TITLE</span>
       </fieldset>
+
+      <%!-- QUEUE --%>
 
       <fieldset class="fieldset rounded-box border p-4 neon-box neon-box-purple" >
       <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
 
-      <div class="font-bold grid grid-cols-3 gap-2">
-        <p class="text-lg border-b">SONG</p>
-        <p class="text-lg border-b">SINGER</p>
-        <div class=""></div>
-      </div>
 
-
-      <div id="queued_songs" >
         <.live_component
-          :for={song <- @songs}
-          :key={song.id}
           module={QueuedSongLive}
+          :for={song <- @songs}
           id={song.id}
           song={song}
           editing={false}
           />
-      </div>
+
       </fieldset>
 
       <fieldset class="fieldset neon-box neon-box-blue rounded-box border p-4">
