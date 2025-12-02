@@ -16,20 +16,29 @@ defmodule KaraokeWeb.SongLive.Index do
       <%!-- NOW PLAYING --%>
 
       <fieldset id="now-playing" class="fieldset neon-box neon-box-pink rounded-box border p-4">
-      <legend class="fieldset-legend neon-text uppercase text-xl md:text-3xl ">Now Playing</legend>
-      <p class="neon-text text-3xl uppercase">Singer</p>
-      <p class="text-xl pb-4">name of the song</p>
+        <legend class="fieldset-legend neon-text uppercase text-xl md:text-3xl ">Now Playing</legend>
+
+        <div :if={@playing}>
+          <p class="neon-text text-3xl uppercase">{@playing.singer}</p>
+          <p class="text-xl pb-4">{@playing.title}</p>
+        </div>
+
       </fieldset>
 
       <%!-- QUEUE --%>
 
       <fieldset id="song-queue" class="fieldset rounded-box border p-4 neon-box neon-box-purple" >
-      <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
+        <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
+
+        <.button id="play-next" variant="neon" title="Play next song" phx-click="next" >
+          <.icon name="hero-forward" />
+          <span class="uppercase">Next Song</span>
+        </.button>
 
 
         <.live_component
           module={QueuedSongLive}
-          :for={song <- @songs}
+          :for={song <- @queue}
           id={song.id}
           song={song}
           editing={false}
@@ -43,7 +52,7 @@ defmodule KaraokeWeb.SongLive.Index do
           <.input field={@form[:title]} type="text" placeholder="song title"  />
           <.input field={@form[:singer]} type="text" placeholder="singer name" />
           <div class="fieldset mb2">
-          <.button variant="neon-secondary" title="Add song to queue" phx-disable-with="Saving..." disabled={} >
+          <.button variant="neon-secondary" title="Add song to queue" phx-disable-with="Saving..." >
             <.icon name="hero-plus" />
             <span class="hidden xxs:inline sm:max-md:hidden uppercase"> Add
               <span class="hidden xs:inline md:max-lg:hidden">to Queue</span>
@@ -62,34 +71,36 @@ defmodule KaraokeWeb.SongLive.Index do
   def mount(_params, _session, socket) do
     dbg(socket)
 
-
-    # {:ok, party_pid} = Party.start_link([])
-    # dbg(party_pid)
-    # songs = Party.list_songs(party_pid)
-    # dbg(songs)
-
-
-
-
     if connected?(socket) do
       party = Party.subscribe(Party)
 
       IO.puts("get the party started")
-      dbg(party.queue)
-      {:ok, socket |> assign(party: party) |> assign(songs: party.queue)}
+      dbg(socket)
+
+      new_socket = socket
+        |> assign(:party, party)
+        |> assign(:playing, party.playing)
+        |> assign(:queue, party.queue)
+        |> assign(:form, to_form(%{}, action: :validate))
+
+      {:ok, new_socket}
+
     end
 
     {:ok, socket
       |> assign(:page_title, "Karaoke Party")
-      |> assign(songs: [])
-      |> assign(form: to_form(%{}, action: :validate))}
-
+      |> assign(:party, nil)
+      |> assign(:playing, nil)
+      |> assign(:queue, [])
+      |> assign(:form, to_form(%{}, action: :validate))}
 
   end
 
+
+
+
   @impl true
   def handle_event("validate", %{"song" => song}, socket) do
-    dbg(song)
     changeset = Song.to_changeset(song)
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
@@ -115,15 +126,20 @@ defmodule KaraokeWeb.SongLive.Index do
       {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
 
     else
-      new_queue = Party.add_song(Party, %Song{title: title, singer: singer, id: this_song_id})
+      new_party = Party.add_song(Party, %Song{title: title, singer: singer, id: this_song_id})
 
       {:noreply, socket
-        |> assign(songs: new_queue)
+        |> assign(:party, new_party)
+        |> assign(:form, to_form(%{}, action: :new))}
         # |> put_flash(:info, "Song added to queue")
-        |> assign(form: to_form(%{}, action: :new))}
     end
+  end
 
 
+  @impl true
+  def handle_event("next", _params, socket) do
+    new_party = Party.next_song(Party)
+    {:noreply, assign(socket, :party, new_party)}
   end
 
 
@@ -131,17 +147,12 @@ defmodule KaraokeWeb.SongLive.Index do
 
   @impl true
   def handle_info({:updated, new_party}, socket) do
-    {:noreply, socket |> assign(party: new_party) |> assign(songs: new_party.queue)}
+    {:noreply, socket
+      |> assign(party: new_party)
+      |> assign(queue: new_party.queue)
+      |> assign(playing: new_party.playing)
+    }
   end
 
-  # def handle_in({:song_added, payload}, socket) do
-  #   dbg("song_added");
-  #   dbg(payload)
-  #   # send_update(
-  #   #   QueuedSongLive,
-  #   #   id: song.id
-  #   # )
-  #   {:noreply, stream_insert(socket, :songs, payload.song)}
-  # end
 
 end

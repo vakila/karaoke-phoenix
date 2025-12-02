@@ -91,7 +91,8 @@ defmodule Karaoke.Party do
     party = %{
       pid: self(),
       queue: songs,
-      subscribers: MapSet.new([])
+      subscribers: MapSet.new([]),
+      playing: nil,
     }
     dbg(self())
     {:ok, party}
@@ -140,13 +141,40 @@ defmodule Karaoke.Party do
 
 
 
+
   @impl true
   def handle_call({:next}, _from, party) do
-    [next_song | new_queue] = party.queue
-    new_party = put_in(party.queue, new_queue)
-    broadcast(party, {:updated, next_song, new_queue})
-    {:reply, next_song, new_party}
+      %{playing: old_song, queue: old_queue} = party
+      case old_queue do
+        [] ->
+
+          if (old_song == nil) do
+            # no-op, the party was already over
+            {:reply, party, party}
+          else
+            # the party is over now, broadcast update
+            new_party = put_in(party.playing, nil)
+            broadcast(party, {:updated, new_party})
+            {:reply, new_party, new_party}
+          end
+
+        [final_song] ->
+          # the party is almost over, queue now empty
+          new_party = put_in(party.playing, final_song)
+          new_party = put_in(new_party.queue, [])
+          broadcast(party, {:updated, new_party})
+          {:reply, new_party, new_party}
+
+        [new_playing | new_queue] ->
+          # move the party along
+          new_party = put_in(party.playing, new_playing)
+          new_party = put_in(new_party.queue, new_queue)
+          broadcast(party, {:updated, new_party})
+          {:reply, new_party, new_party}
+
+    end
   end
+
 
 
 
@@ -161,6 +189,7 @@ defmodule Karaoke.Party do
     Process.monitor(pid)
     party = update_in(party.subscribers, &MapSet.put(&1, pid))
     broadcast(party, {:updated, party})
+    dbg(party)
     {:reply, party, party}
   end
 
