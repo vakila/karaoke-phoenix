@@ -64,7 +64,8 @@ defmodule Karaoke.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:ecto, "~> 3.13"},
-      {:phoenix_ecto, "~> 4.7"}
+      {:phoenix_ecto, "~> 4.7"},
+      { :uuid, "~> 1.1" }
     ]
   end
 

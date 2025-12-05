@@ -6,8 +6,6 @@ defmodule KaraokeWeb.SongLive.Index do
   alias Karaoke.Party
   alias Karaoke.Party.Song
 
-
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -119,7 +117,7 @@ defmodule KaraokeWeb.SongLive.Index do
   @impl true
   def handle_event("add_song", %{"title" => title, "singer" => singer}, socket) do
 
-    this_song_id = "#{singer}-#{title}"
+    this_song_id = UUID.uuid4(:hex)
     changeset = Song.to_changeset(%{title: title, singer: singer, id: this_song_id})
 
     if !changeset.valid? do
