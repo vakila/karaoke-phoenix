@@ -60,7 +60,7 @@ defmodule KaraokeWeb.SongLive.Index do
 
       <fieldset id="add-song" class="fieldset neon-box neon-box-blue rounded-box border p-4">
        <legend class="fieldset-legend neon-text text-xl">Add song</legend>
-       <.form for={@form} id="song-form-new" phx-submit="add_song" class="grid sm:grid-cols-3 gap-2 py-2 items-start ">
+       <.form for={@form} id="song-form-new" phx-submit="add_song" class="grid sm:grid-cols-4 gap-2 py-2 items-start ">
           <.input field={@form[:singer]} type="text" placeholder="performer name" />
           <.input field={@form[:title]} type="text" placeholder="song title"  />
           <.input field={@form[:artist]} type="text" placeholder="song artist"  />
@@ -69,7 +69,7 @@ defmodule KaraokeWeb.SongLive.Index do
           <.button variant="neon-secondary" title="Add song to queue" phx-disable-with="Saving..." >
             <.icon name="hero-plus" />
             <span class="hidden xxs:inline sm:max-md:hidden uppercase"> Add
-              <span class="hidden xs:inline md:max-lg:hidden">to Queue</span>
+              <span class="hidden xs:inline md:max-xl:hidden">to Queue</span>
             </span>
           </.button>
           </div>
