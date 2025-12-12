@@ -4,6 +4,7 @@ defmodule Karaoke.Party.Song do
 
   schema "song" do
     field :title, :string
+    field :artist, :string
     field :singer, :string
     field :position, :integer
 
