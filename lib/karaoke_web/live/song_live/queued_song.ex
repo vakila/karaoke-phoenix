@@ -11,10 +11,11 @@ defmodule KaraokeWeb.QueuedSongLive do
       <div id={@song.id} class="w-full py-4">
 
       <%!-- Edit Song Form (if editing) --%>
-      <.form :if={assigns.editing} id={"edit-queued-" <> @song.id} for={@form}  phx-target={@myself} phx-submit="save" class="edit-queued w-full grid sm:grid-cols-3 items-center gap-2" >
+      <.form :if={assigns.editing} id={"edit-queued-" <> @song.id} for={@form}  phx-target={@myself} phx-submit="save" class="edit-queued w-full grid sm:grid-cols-4 items-center gap-2" >
           <%!-- <span>{@song.id}</span> --%>
-          <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" />
-          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title"   />
+          <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" placeholder="performer name" />
+          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title" />
+          <.input field={@form[:artist]} id={@song.id <> "-artist"} type="text" placeholder="song artist" />
           <div class="grid xs:grid-cols-2 gap-2 mb-2">
           <.button type="submit" variant="primary">
             <.icon name="hero-check" />
@@ -29,9 +30,10 @@ defmodule KaraokeWeb.QueuedSongLive do
 
       <%!-- Song Info + Actions (if not editing) --%>
       <div :if={!assigns.editing} id={"view-queued-" <> @song.id}
-        class="view-queued w-full grid sm:grid-cols-3 gap-2">
+        class="view-queued w-full grid sm:grid-cols-4 gap-2">
           <span class="text-xl uppercase neon-text">{@song.singer} </span>
           <span class="text-lg">{@song.title}</span>
+          <span :if={@song.artist} class="text-lg">{@song.artist}</span>
 
         <div class="grid xs:grid-cols-2 gap-2 mb-2">
           <.button variant="primary" phx-click="edit" phx-target={@myself}>
@@ -56,7 +58,7 @@ defmodule KaraokeWeb.QueuedSongLive do
   def handle_event("edit", _params, socket) do
     song = socket.assigns.song
     {:noreply, socket
-      |> assign(form: to_form(%{"title" => song.title, "singer" => song.singer, "id" => song.id}, action: :save ))
+      |> assign(form: to_form(%{"title" => song.title, "singer" => song.singer, "artist" => song.artist, "id" => song.id}, action: :save ))
       |> assign(editing: true)
     }
   end

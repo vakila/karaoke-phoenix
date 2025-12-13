@@ -5,8 +5,8 @@ defmodule KaraokeWeb.PartyLiveTest do
   import Phoenix.LiveViewTest
   import Karaoke.PartyFixtures
 
-  @create_attrs %{title: "some title", singer: "some singer"}
-  @update_attrs %{title: "some updated title", singer: "some updated singer"}
+  @create_attrs %{title: "some title", singer: "some singer", artist: "some artist"}
+  @update_attrs %{title: "some updated title", singer: "some updated singer", artist: "some updated artist"}
   @invalid_attrs %{title: nil, singer: nil}
   defp create_song(_) do
     song = song_fixture()
