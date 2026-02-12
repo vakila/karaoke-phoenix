@@ -45,6 +45,18 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
+## Deployment
+
+The live app is (usually) available at [karaoke.recurse.com](https://karaoke.recurse.com), which points to [karaoke.gigalixirapp.com](https://karaoke.gigalixirapp.com/).
+
+The app is hosted on [Gigalixir](https://gigalixir.com/docs/) on the free tier, and if there are no changes pushed to the `gigalixir` branch in over 30 days Gigalixir will put the project to sleep. 
+
+To reactivate it: 
+`git commit --allow-empty -m "refresh gigalixir"`
+`git push gigalixir`
+
+- [ ] TODO: Add a git action to automatically redeploy each month
+
 ## Learn more
 
 * Official website: https://www.phoenixframework.org/
