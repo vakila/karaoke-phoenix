@@ -17,7 +17,7 @@ defmodule Karaoke.Party.Song do
 
   def changeset(song, attrs) do
     song
-    |> cast(attrs, [:title, :singer])
+    |> cast(attrs, [:title, :singer, :artist])
     |> validate_required([:title, :singer])
   end
 
