@@ -1,0 +1,28 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Gigalixir Monthly Refresh
+
+on:
+  schedule: 
+    - cron: "32 5 13 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  redeploy:
+    name: Redeploy to Gigalixir
+    runs-on: ubuntu-latest
+    
+  build:
+
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Empty commit
+      run: git commit --allow-empty -m "refresh gigalixir"
+    - name: Push to Gigalixir
+      run: git push gigalixir main
