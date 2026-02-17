@@ -7,22 +7,18 @@ name: Gigalixir Monthly Refresh
 
 on:
   schedule: 
-    - cron: "32 5 13 * *"
+    - cron: "52 * * * *"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   redeploy:
-    name: Redeploy to Gigalixir
-    runs-on: ubuntu-latest
-    
-  build:
-
-    name: Build and test
+    name: Refresh Gigalixir
     runs-on: ubuntu-latest
     steps:
-    - name: Empty commit
-      run: git commit --allow-empty -m "refresh gigalixir"
-    - name: Push to Gigalixir
-      run: git push gigalixir main
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
+    - run: sudo pip install gigalixir
+    - run: gigalixir login -e "${{ secrets.GIGALIXIR_EMAIL }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
+    - run: gigalixir ps:scale -r 1
