@@ -7,7 +7,7 @@ name: Gigalixir Monthly Refresh
 
 on:
   schedule: 
-    - cron: "32 * * * *"
+    - cron: "32 5 19 * *"
   workflow_dispatch:
 
 permissions:
