@@ -3,20 +3,24 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Gigalixir Monthly Refresh
+name: Deploy to Gigalixir
 
-on: push
- 
+on: 
+  push:
+    branches:
+      - main
+
 permissions:
   contents: read
 
 jobs:
-  redeploy:
-    name: Refresh Gigalixir
+  deploy:
+    name: Deploy main to Gigalixir
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-python@v6
     - run: sudo pip install gigalixir
     - run: gigalixir login -e "${{ secrets.GIGALIXIR_EMAIL }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
-    - run: gigalixir ps:scale -a karaoke -r 1
+    - run: gigalixir git:remote ${{ secrets.GIGALIXIR_APP_NAME }}
+    - run: git push gigalixir main
