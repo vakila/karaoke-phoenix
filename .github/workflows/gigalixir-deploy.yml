@@ -24,4 +24,5 @@ jobs:
     - run: sudo pip install gigalixir
     - run: gigalixir login -e "${{ secrets.GIGALIXIR_EMAIL }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
     - run: gigalixir git:remote ${{ secrets.GIGALIXIR_APP_NAME }}
-    - run: git push -f gigalixir main
+    - run: git pull gigalixir
+    - run: git push gigalixir main
