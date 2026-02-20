@@ -24,6 +24,8 @@ The live app is (usually) available at [karaoke.recurse.com](https://karaoke.rec
 
 Whenever code is pushed to the `main` branch of this repo, the `gigalixir-deploy.yml` Github Action runs to deploy the updated version to Gigalixir. That action can also be triggered manually if need be. 
 
+Credentials for the Gigalixir login (@vakila's account) are stored as secrets in this repo's settings.
+
 
 ### Oh no! karaoke.recurse.com is down! :(
 
