@@ -7,7 +7,7 @@ name: Gigalixir Monthly Refresh
 
 on:
   schedule: 
-    - cron: "32 5 21 * *"
+    - cron: "32 16 3 * *"
   workflow_dispatch:
 
 permissions:
@@ -22,4 +22,5 @@ jobs:
     - uses: actions/setup-python@v6
     - run: sudo pip install gigalixir
     - run: gigalixir login -e "${{ secrets.GIGALIXIR_EMAIL }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
-    - run: gigalixir ps:scale -a karaoke -r 1
+    - run: gigalixir git:remote "${{ secrets.GIGALIXIR_APP_NAME }}"
+    - run: git push gigalixir main
