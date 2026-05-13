@@ -48,7 +48,13 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 ## Deployment
 
 ### Docker
-The app can be run in a [Docker](https://docs.docker.com/) container built from the [Dockerfile]() in this repo. 
+The app can be run in a [Docker](https://docs.docker.com/) container built from the `Dockerfile` in this repo. 
+
+The `Dockerfile`, `.dockerignore`, and `rel/` were generated with: 
+
+```
+$ mix phx.gen.release --docker
+```
 
 To build and run the container locally: 
 
