@@ -71,3 +71,50 @@ Pages:
 - More fine-grained access control (e.g. Can only delete your own songs from the queue, No queuing multiple songs at once for the same person)
 - Persist to database?
 
+## Development
+
+To start your Phoenix server:
+
+* Run `mix setup` to install and setup dependencies
+* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+
+## Deployment
+
+### Docker
+The app can be run in a [Docker](https://docs.docker.com/) container built from the `Dockerfile` in this repo. 
+
+The `Dockerfile`, `.dockerignore`, and `rel/` were generated with: 
+
+```
+$ mix phx.gen.release --docker
+```
+
+To build and run the container locally: 
+
+```
+$ docker build -t karaoke .
+$ docker run \
+  -e SECRET_KEY_BASE="$(mix phx.gen.secret)" \
+  -e PHX_HOST="localhost" \
+  -e PORT=4000 \
+  -p 4000:4000 \
+  karaoke 
+```
+
+### Disco
+
+The app is hosted on [RC's Disco server](https://disco.recurse.com/) at [karaoke.rcdis.co](http://karaoke.rcdis.co).
+
+Previously the app was hosted on [Gigalixir](https://gigalixir.com/docs/), and the migration to RCDisco is in progress!
+
+## Learn more
+
+* Official website: https://www.phoenixframework.org/
+* Guides: https://hexdocs.pm/phoenix/overview.html
+* Docs: https://hexdocs.pm/phoenix
+* Forum: https://elixirforum.com/c/phoenix-forum
+* Source: https://github.com/phoenixframework/phoenix
