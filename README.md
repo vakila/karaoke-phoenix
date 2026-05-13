@@ -47,6 +47,23 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 ## Deployment
 
+### Docker
+The app can be run in a [Docker](https://docs.docker.com/) container built from the [Dockerfile]() in this repo. 
+
+To build and run the container locally: 
+
+```
+$ docker build -t karaoke .
+$ docker run \
+  -e SECRET_KEY_BASE="$(mix phx.gen.secret)" \
+  -e PHX_HOST="localhost" \
+  -e PORT=4000 \
+  -p 4000:4000 \
+  karaoke 
+```
+
+### Disco
+
 The app is hosted on [RC's Disco server](https://disco.recurse.com/) at [karaoke.rcdis.co](http://karaoke.rcdis.co).
 
 Previously the app was hosted on [Gigalixir](https://gigalixir.com/docs/), and the migration to RCDisco is in progress!
