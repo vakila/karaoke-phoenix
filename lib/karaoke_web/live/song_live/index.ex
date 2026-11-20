@@ -27,6 +27,11 @@ defmodule KaraokeWeb.SongLive.Index do
     get_url(song.title, song.artist)
   end
 
+  # whether the song's video can be played inline instead of linked out
+  defp embed?(%Song{} = song) do
+    Karaoke.YouTube.valid_id?(song.youtube_id) and song.embeddable != false
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -36,28 +41,65 @@ defmodule KaraokeWeb.SongLive.Index do
       <fieldset id="now-playing" class="fieldset neon-box neon-box-pink rounded-box border p-4">
         <legend class="fieldset-legend neon-text uppercase text-xl md:text-3xl ">Now Playing</legend>
 
-        <div :if={@playing}>
+        <div :if={@playing} id="playing-song">
           <p class="neon-text text-3xl uppercase">{@playing.singer}</p>
           <p class="text-xl">{@playing.title}</p>
-          <p :if={@playing.artist} class="text-xl pb-4">{@playing.artist}</p>
+          <p :if={@playing.artist} class="text-xl">{@playing.artist}</p>
 
-          <%= if Karaoke.YouTube.valid_id?(@playing.youtube_id) and @playing.embeddable != false do %>
-            <div class="aspect-video w-full my-3">
-              <iframe
-                src={"https://www.youtube.com/embed/#{@playing.youtube_id}?autoplay=1&rel=0"}
-                title={@playing.youtube_title || @playing.title}
-                class="w-full h-full rounded"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              >
-              </iframe>
-            </div>
-          <% else %>
-            <.button variant="neon-secondary" href={video_url(@playing)} target="_blank">
+          <div :if={embed?(@playing)} class="aspect-video w-full mt-4">
+            <iframe
+              src={"https://www.youtube.com/embed/#{@playing.youtube_id}?autoplay=1&rel=0"}
+              title={@playing.youtube_title || @playing.title}
+              class="w-full h-full rounded"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            >
+            </iframe>
+          </div>
+        </div>
+
+        <%!-- Transport controls: rewind (left), YouTube fallback (center), next (right).
+             On small screens the YouTube button gets its own row above. --%>
+        <div
+          id="now-playing-controls"
+          class="grid grid-cols-2 sm:grid-cols-[1fr_auto_1fr] items-center gap-4 pt-4"
+        >
+          <div
+            :if={@playing && !embed?(@playing)}
+            class="col-span-2 sm:col-span-1 sm:col-start-2 sm:row-start-1"
+          >
+            <.button
+              id="open-youtube"
+              variant="neon-secondary"
+              href={video_url(@playing)}
+              target="_blank"
+            >
               Open on YouTube <.icon name="hero-arrow-top-right-on-square" />
             </.button>
-          <% end %>
+          </div>
+
+          <div class="justify-self-start sm:col-start-1 sm:row-start-1">
+            <button
+              :if={@previous}
+              id="rewind"
+              type="button"
+              class="cassette-key"
+              phx-click="rewind"
+              title={"Rewind to " <> @previous.singer}
+              aria-label={"Rewind to previous song: " <> @previous.singer}
+            >
+              <.icon name="hero-backward-solid" class="size-6" />
+              <span class="cassette-key-label">Rew</span>
+            </button>
+          </div>
+
+          <div class="justify-self-end sm:col-start-3 sm:row-start-1">
+            <.button id="play-next" variant="neon" title="Play next song" phx-click="next">
+              <.icon name="hero-forward" />
+              <span class="uppercase">Next Song</span>
+            </.button>
+          </div>
         </div>
       </fieldset>
 
@@ -65,11 +107,6 @@ defmodule KaraokeWeb.SongLive.Index do
 
       <fieldset id="song-queue" class="fieldset rounded-box border p-4 neon-box neon-box-purple">
         <legend class="fieldset-legend neon-text text-xl">Up Next</legend>
-
-        <.button id="play-next" variant="neon" title="Play next song" phx-click="next">
-          <.icon name="hero-forward" />
-          <span class="uppercase">Next Song</span>
-        </.button>
 
         <.live_component
           :for={song <- @queue}
@@ -152,6 +189,7 @@ defmodule KaraokeWeb.SongLive.Index do
         socket
         |> assign(:party, party)
         |> assign(:playing, party.playing)
+        |> assign(:previous, party.previous)
         |> assign(:queue, party.queue)
         |> assign(:form, to_form(%{}, as: :song, action: :validate))
         |> assign(:search_results, [])
@@ -167,6 +205,7 @@ defmodule KaraokeWeb.SongLive.Index do
      |> assign(:page_title, "Karaoke Party")
      |> assign(:party, nil)
      |> assign(:playing, nil)
+     |> assign(:previous, nil)
      |> assign(:queue, [])
      |> assign(:form, to_form(%{}, as: :song, action: :validate))
      |> assign(:search_results, [])
@@ -299,6 +338,12 @@ defmodule KaraokeWeb.SongLive.Index do
   end
 
   @impl true
+  def handle_event("rewind", _params, socket) do
+    new_party = Party.rewind(Party)
+    {:noreply, assign(socket, :party, new_party)}
+  end
+
+  @impl true
   def handle_async(:youtube_search, {:ok, {:ok, results}}, socket) do
     {:noreply, socket |> assign(:searching, false) |> assign(:search_results, results)}
   end
@@ -319,6 +364,7 @@ defmodule KaraokeWeb.SongLive.Index do
      socket
      |> assign(party: new_party)
      |> assign(queue: new_party.queue)
-     |> assign(playing: new_party.playing)}
+     |> assign(playing: new_party.playing)
+     |> assign(previous: new_party.previous)}
   end
 end
