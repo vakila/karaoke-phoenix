@@ -2,87 +2,26 @@
 
 It's Karaoke! It's Elixir & Phoenix! It's Recurse!
 
-## Development
-
-To start your Phoenix server:
-
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-### Tests
-
-Ignore them! They are broken on main! 
-
-- [ ] TODO fix that!
-
 
 ## Deployment
 
-The live app is (usually) available at [karaoke.recurse.com](https://karaoke.recurse.com), which points to [karaoke.gigalixirapp.com](https://karaoke.gigalixirapp.com/).
+The app is hosted on [RC's Disco server](https://disco.recurse.com/).
 
-Whenever code is pushed to the `main` branch of this repo, the `gigalixir-deploy.yml` Github Action runs to deploy the updated version to Gigalixir. That action can also be triggered manually if need be. 
+The live app is (usually) available at [karaoke.recurse.com](https://karaoke.recurse.com), which points to [karaoke.rcdis.co](http://karaoke.rcdis.co).
 
-Credentials for the Gigalixir login (@vakila's account) are stored as secrets in this repo's settings.
+Whenever code is pushed to the `main` branch of this repo, Disco should pick up the changes and redeploy the site (give it a minute). 
+
+Previously the app was hosted on Gigalixir. The old gigalixir actions in this repo are now disabled because hosting on Disco is way more awesome. 
 
 
 ### Oh no! karaoke.recurse.com is down! :(
 
-Don't panic! Grab your towel, wipe off the karaoke sweat and redeploy the app.
+Don't panic! Grab your towel, and wipe off the karaoke sweat. and 
 
-The app is hosted on [Gigalixir](https://gigalixir.com/docs/) on the free tier, so if there are no new deploys of the project in over 30 days Gigalixir will deactivate the project and scale down the deployment to 0 replicas. 
+A new push to the `main` branch should trigger a redeploy, if need be (e.g. revert and push the previous bad change). 
 
-To resuscitate the app without pushing any changes, you can manually run the `gigalixir-scale.yml` Github Action to tell Gigalixir to scale the project back up to 1 replica. This action is (theoretically) also scheduled to run automatically once per month.
+You can use the [Disco CLI](https://disco.cloud/docs/cli/reference/) to see what the deal is. Try to check the Disco logs for the 'karaoke' project or redeploy the project manually if need be. 
 
-
-
-## Planning Notes
-
-### MVP
-
-- Participants can visit site and queue up their song choice
-- Searches for the given song on YouTube in a new window (just constructs URL: `https://youtube.com/results?search_query={song_name}+karaoke`)
-- Restrict access to local RC network
-- Mobile-friendly
-- Sessions
-  - Start a session -> whichever client started now is "admin" of the session (e.g. projector laptop)
-  - Participants can Join a given session with a code
-  - Admin can only play songs, not delete them
-- When session ends, automatically open "Closing Time" song lol
-
-Arch:
-- No DB! All in Memory!
-- Session data stored in a GenServer
-- Everyone connects to the same GenServer
-- Use process registry to map session codes to PIDs
-
-Pages:
-- / -> Start/join session (static)
-- /sessions/ABCD -> Queue for Session ABCD (live view)
-
-![Information Architecture](manual/Information_Architecture.png)
-
-### V1
-
-- Uses RC Oauth & gets names from there
-- Finds & suggests videos based on song name/artist
-- Embed YouTube videos instead of linking
-- More fine-grained access control (e.g. Can only delete your own songs from the queue, No queuing multiple songs at once for the same person)
-- Persist to database?
-
-## Development
-
-To start your Phoenix server:
-
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Deployment
 
 ### Docker
 The app can be run in a [Docker](https://docs.docker.com/) container built from the `Dockerfile` in this repo. 
@@ -105,16 +44,50 @@ $ docker run \
   karaoke 
 ```
 
-### Disco
 
-The app is hosted on [RC's Disco server](https://disco.recurse.com/) at [karaoke.rcdis.co](http://karaoke.rcdis.co).
 
-Previously the app was hosted on [Gigalixir](https://gigalixir.com/docs/), and the migration to RCDisco is in progress!
+## Development
 
-## Learn more
+To start the Phoenix server:
+
+* Run `mix setup` to install and setup dependencies
+* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+
+
+### Learn more about Phoenix
 
 * Official website: https://www.phoenixframework.org/
 * Guides: https://hexdocs.pm/phoenix/overview.html
 * Docs: https://hexdocs.pm/phoenix
 * Forum: https://elixirforum.com/c/phoenix-forum
 * Source: https://github.com/phoenixframework/phoenix
+
+
+
+## Notes
+
+### Features
+
+- Participants can visit site and queue up their song choice
+- Queued songs can be edited and deleted
+- Searches & suggests videos from YouTube based on song name/artist
+- Embeds YouTube videos in page when possible, otherwise links to YouTube in new tab
+- The last song can be recovered if you accidentally skipped it
+
+Arch:
+- No DB! All in Memory!
+- Queue data stored in a GenServer, which all clients connect to
+- Live updates to frontend handled by Phoenix LiveView
+
+
+### Future Ideas
+
+- See open issues
+- Use RC Oauth & gets names from there
+- More fine-grained access control (e.g. Can only delete your own songs from the queue, No queuing multiple songs at once for the same person)
+- Persist to database?
+
+
