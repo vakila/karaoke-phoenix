@@ -31,6 +31,18 @@ defmodule Karaoke.Party do
   end
 
   @doc """
+  Rewinds to the previous song, like the REW key on a tape deck.
+
+  The previous song becomes the playing song again, and whatever was playing
+  goes back to the front of the queue. Only one previous song is remembered,
+  so you can only rewind once per "next" - after rewinding there's nothing
+  left to rewind to. Rewinding with no previous song is a no-op.
+  """
+  def rewind(party) do
+    GenServer.call(party, {:rewind})
+  end
+
+  @doc """
   Appends the `song` to the queue.
   """
   def add_song(party, song) do
@@ -83,7 +95,9 @@ defmodule Karaoke.Party do
       pid: self(),
       queue: songs,
       subscribers: MapSet.new([]),
-      playing: nil
+      playing: nil,
+      # the last song that played, so an accidental "next" can be rewound
+      previous: nil
     }
 
     dbg(self())
@@ -139,25 +153,35 @@ defmodule Karaoke.Party do
           {:reply, party, party}
         else
           # the party is over now, broadcast update
-          new_party = put_in(party.playing, nil)
+          new_party = %{party | playing: nil, previous: old_song}
           broadcast(party, {:updated, new_party})
           {:reply, new_party, new_party}
         end
 
-      [final_song] ->
-        # the party is almost over, queue now empty
-        new_party = put_in(party.playing, final_song)
-        new_party = put_in(new_party.queue, [])
-        broadcast(party, {:updated, new_party})
-        {:reply, new_party, new_party}
-
       [new_playing | new_queue] ->
-        # move the party along
-        new_party = put_in(party.playing, new_playing)
-        new_party = put_in(new_party.queue, new_queue)
+        # move the party along, remembering what just played
+        new_party = %{party | playing: new_playing, queue: new_queue, previous: old_song}
         broadcast(party, {:updated, new_party})
         {:reply, new_party, new_party}
     end
+  end
+
+  @impl true
+  def handle_call({:rewind}, _from, %{previous: nil} = party) do
+    # nothing to rewind to (never played, or already rewound)
+    {:reply, party, party}
+  end
+
+  @impl true
+  def handle_call({:rewind}, _from, party) do
+    %{playing: current, previous: previous, queue: queue} = party
+
+    # put whoever is on now back at the front of the line
+    new_queue = if current, do: [current | queue], else: queue
+
+    new_party = %{party | playing: previous, queue: new_queue, previous: nil}
+    broadcast(party, {:updated, new_party})
+    {:reply, new_party, new_party}
   end
 
   @impl true
