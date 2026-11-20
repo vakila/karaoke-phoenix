@@ -5,8 +5,6 @@ defmodule KaraokeWeb.Layouts do
   """
   use KaraokeWeb, :html
 
-  alias KaraokeWeb.CoreComponents
-
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
@@ -39,9 +37,9 @@ defmodule KaraokeWeb.Layouts do
     ~H"""
     <div class="sm:hidden w-full divider pt-2 px-4 sm:px-6 lg:px-8 text-white" />
     <header class="navbar py-6 sm:pt-12 px-4 sm:px-6 lg:px-8 flex-wrap w-full items-center justify-center">
-
-          <h1 class="w-full text-4xl xs:text-5xl md:text-6xl font-bold neon-text text-white tracking-wide  divider neon-divider"><span>Karaoke!</span></h1>
-
+      <h1 class="w-full text-4xl xs:text-5xl md:text-6xl font-bold neon-text text-white tracking-wide  divider neon-divider">
+        <span>Karaoke!</span>
+      </h1>
     </header>
     <div class="sm:hidden w-full divider pb-2 px-4 sm:px-6 lg:px-8 text-white" />
 
@@ -54,10 +52,12 @@ defmodule KaraokeWeb.Layouts do
     <div class="sm:hidden w-full divider p-4 px-4 sm:px-6 lg:px-8 text-white" />
 
     <footer class="footer flex justify-center items-center gap-2 py-6 px-4 sm:px-6 lg:px-8 w-full text-white divider neon-divider">
-
       <div class="flex flex-row justify-center items-center gap-1 mx-2">
-
-        <a href="https://github.com/vakila/karaoke-phoenix" title="github.com/vakila/karaoke-phoenix" target="_blank">
+        <a
+          href="https://github.com/vakila/karaoke-phoenix"
+          title="github.com/vakila/karaoke-phoenix"
+          target="_blank"
+        >
           <.icon name="hero-code-bracket" />
         </a>
 
@@ -65,7 +65,7 @@ defmodule KaraokeWeb.Layouts do
         <p class="flex">
           &nbsp;made
           <span class="hidden xs:inline">
-          &nbsp;with <.icon name="hero-heart" />
+            &nbsp;with <.icon name="hero-heart" />
           </span>
           &nbsp;at&nbsp;
         </p>

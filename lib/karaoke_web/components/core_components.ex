@@ -102,7 +102,6 @@ defmodule KaraokeWeb.CoreComponents do
       "neon-secondary" => "btn-secondary neon-btn"
     }
 
-
     assigns =
       assign_new(assigns, :class, fn ->
         ["btn", Map.fetch!(variants, assigns[:variant])]
@@ -423,7 +422,7 @@ defmodule KaraokeWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class="neon-svg">
-    <span class={[@name, @class]} />
+      <span class={[@name, @class]} />
     </span>
     """
   end

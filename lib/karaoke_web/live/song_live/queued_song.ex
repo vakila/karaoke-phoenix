@@ -6,61 +6,92 @@ defmodule KaraokeWeb.QueuedSongLive do
 
   @impl true
   def render(assigns) do
-
-      ~H"""
-      <div id={@song.id} class="w-full py-4">
-
+    ~H"""
+    <div id={@song.id} class="w-full py-4">
       <%!-- Edit Song Form (if editing) --%>
-      <.form :if={assigns.editing} id={"edit-queued-" <> @song.id} for={@form}  phx-target={@myself} phx-submit="save" class="edit-queued w-full grid sm:grid-cols-4 items-center gap-2" >
-          <%!-- <span>{@song.id}</span> --%>
-          <.input field={@form[:singer]} id={@song.id <> "-singer"} type="text" placeholder="performer name" />
-          <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title" />
-          <.input field={@form[:artist]} id={@song.id <> "-artist"} type="text" placeholder="song artist" />
-          <div class="grid xs:grid-cols-2 gap-2 mb-2">
+      <.form
+        :if={assigns.editing}
+        id={"edit-queued-" <> @song.id}
+        for={@form}
+        phx-target={@myself}
+        phx-submit="save"
+        class="edit-queued w-full grid sm:grid-cols-4 items-center gap-2"
+      >
+        <%!-- <span>{@song.id}</span> --%>
+        <.input
+          field={@form[:singer]}
+          id={@song.id <> "-singer"}
+          type="text"
+          placeholder="performer name"
+        />
+        <.input field={@form[:title]} id={@song.id <> "-title"} type="text" placeholder="song title" />
+        <.input
+          field={@form[:artist]}
+          id={@song.id <> "-artist"}
+          type="text"
+          placeholder="song artist"
+        />
+        <div class="grid xs:grid-cols-2 gap-2 mb-2">
           <.button type="submit" variant="primary">
             <.icon name="hero-check" />
             <span class="hidden xxs:max-sm:inline md:inline uppercase">Save</span>
           </.button>
-          <.button >
+          <.button>
             <.icon name="hero-x-mark" />
             <span class="hidden xxs:max-xs:inline uppercase">Cancel</span>
           </.button>
-          </div>
+        </div>
       </.form>
 
       <%!-- Song Info + Actions (if not editing) --%>
-      <div :if={!assigns.editing} id={"view-queued-" <> @song.id}
-        class="view-queued w-full grid sm:grid-cols-4 gap-2">
-          <span class="text-xl uppercase neon-text">{@song.singer} </span>
-          <span class="text-lg">{@song.title}</span>
-          <span :if={@song.artist} class="text-lg">{@song.artist}</span>
+      <div
+        :if={!assigns.editing}
+        id={"view-queued-" <> @song.id}
+        class="view-queued w-full grid sm:grid-cols-4 gap-2"
+      >
+        <span class="text-xl uppercase neon-text">{@song.singer}</span>
+        <span class="text-lg">{@song.title}</span>
+        <span :if={@song.artist} class="text-lg">{@song.artist}</span>
 
         <div class="grid xs:grid-cols-2 gap-2 mb-2">
           <.button variant="primary" phx-click="edit" phx-target={@myself}>
             <.icon name="hero-pencil" />
             <span class="hidden xxs:max-sm:inline md:inline uppercase">Edit</span>
           </.button>
-          <.button variant="primary" phx-click="delete" data-confirm="Delete this song?" phx-target={@myself}>
+          <.button
+            variant="primary"
+            phx-click="delete"
+            data-confirm="Delete this song?"
+            phx-target={@myself}
+          >
             <.icon name="hero-trash" />
             <span class="hidden xxs:max-sm:inline md:inline uppercase">Delete</span>
           </.button>
         </div>
       </div>
-
-
-      </div>
-      """
-
+    </div>
+    """
   end
-
 
   @impl true
   def handle_event("edit", _params, socket) do
     song = socket.assigns.song
-    {:noreply, socket
-      |> assign(form: to_form(%{"title" => song.title, "singer" => song.singer, "artist" => song.artist, "id" => song.id}, action: :save ))
-      |> assign(editing: true)
-    }
+
+    {:noreply,
+     socket
+     |> assign(
+       form:
+         to_form(
+           %{
+             "title" => song.title,
+             "singer" => song.singer,
+             "artist" => song.artist,
+             "id" => song.id
+           },
+           action: :save
+         )
+     )
+     |> assign(editing: true)}
   end
 
   @impl true
@@ -72,27 +103,26 @@ defmodule KaraokeWeb.QueuedSongLive do
     changeset = Song.changeset(old_song, new_params)
     dbg(changeset)
 
-
     if !changeset.valid? do
-      {:noreply, socket
+      {
+        :noreply,
+        socket
         |> assign(:form, to_form(changeset, action: :validate))
         # |> put_flash(:error, "Invalid song data"))
       }
-
     else
       new_song = Ecto.Changeset.apply_changes(changeset)
       dbg(new_song)
       new_queue = Party.edit_song(Party, new_song)
 
-      {:noreply, socket
-        |> assign(editing: false)
-        |> assign(songs: new_queue)
-        # |> put_flash(:info, "Song added to queue")
-        |> assign(form: to_form(%{}, action: :new))}
+      {:noreply,
+       socket
+       |> assign(editing: false)
+       |> assign(songs: new_queue)
+       # |> put_flash(:info, "Song added to queue")
+       |> assign(form: to_form(%{}, action: :new))}
     end
-
   end
-
 
   @impl true
   def handle_event("delete", _params, socket) do
@@ -100,7 +130,6 @@ defmodule KaraokeWeb.QueuedSongLive do
     new_queue = Party.delete_song(Party, song.id)
     {:noreply, assign(socket, songs: new_queue)}
   end
-
 
   @impl true
   def update(assigns, socket) do

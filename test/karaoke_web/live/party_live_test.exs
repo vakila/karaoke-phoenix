@@ -6,7 +6,11 @@ defmodule KaraokeWeb.PartyLiveTest do
   import Karaoke.PartyFixtures
 
   @create_attrs %{title: "some title", singer: "some singer", artist: "some artist"}
-  @update_attrs %{title: "some updated title", singer: "some updated singer", artist: "some updated artist"}
+  @update_attrs %{
+    title: "some updated title",
+    singer: "some updated singer",
+    artist: "some updated artist"
+  }
   @invalid_attrs %{title: nil, singer: nil}
   defp create_song(_) do
     song = song_fixture()
@@ -31,6 +35,7 @@ defmodule KaraokeWeb.PartyLiveTest do
                index_live
                |> element("button", "Add Song")
                |> render_click()
+
       #          |> follow_redirect(conn, ~p"/songs/new")
 
       assert render(form_live) =~ "New Song"
@@ -43,7 +48,8 @@ defmodule KaraokeWeb.PartyLiveTest do
                form_live
                |> form("#song-form", song: @create_attrs)
                |> render_submit()
-              #  |> follow_redirect(conn, ~p"/songs")
+
+      #  |> follow_redirect(conn, ~p"/songs")
 
       html = render(index_live)
       assert html =~ "Song created successfully"
@@ -57,7 +63,8 @@ defmodule KaraokeWeb.PartyLiveTest do
                index_live
                |> element("#songs-#{song.id} button", "Edit")
                |> render_click()
-              #  |> follow_redirect(conn, ~p"/songs/#{song}/edit")
+
+      #  |> follow_redirect(conn, ~p"/songs/#{song}/edit")
 
       assert render(form_live) =~ "Edit Song"
 
@@ -69,7 +76,8 @@ defmodule KaraokeWeb.PartyLiveTest do
                form_live
                |> form("#song-form", song: @update_attrs)
                |> render_submit()
-              #  |> follow_redirect(conn, ~p"/songs")
+
+      #  |> follow_redirect(conn, ~p"/songs")
 
       html = render(index_live)
       assert html =~ "Song updated successfully"
@@ -113,7 +121,8 @@ defmodule KaraokeWeb.PartyLiveTest do
                form_live
                |> form("#song-form", song: @update_attrs)
                |> render_submit()
-              #  |> follow_redirect(conn, ~p"/songs/#{song}")
+
+      #  |> follow_redirect(conn, ~p"/songs/#{song}")
 
       html = render(show_live)
       assert html =~ "Song updated successfully"

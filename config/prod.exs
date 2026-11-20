@@ -9,7 +9,6 @@ config :karaoke, KaraokeWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   url: [host: "karaoke.recurse.com"]
 
-
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Req
 

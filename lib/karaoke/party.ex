@@ -16,15 +16,12 @@ defmodule Karaoke.Party do
     GenServer.start_link(__MODULE__, [], opts)
   end
 
-
   @doc """
   Gets all the songs in the queue.
   """
   def list_songs(party) do
     GenServer.call(party, {:list})
   end
-
-
 
   @doc """
   Gets the next song from the queue.
@@ -49,7 +46,6 @@ defmodule Karaoke.Party do
     GenServer.call(party, {:delete, song_id})
   end
 
-
   @doc """
   Updates a song.
 
@@ -66,8 +62,6 @@ defmodule Karaoke.Party do
     GenServer.call(party, {:edit, song})
   end
 
-
-
   @doc """
   Subscribes the current process to the party.
   """
@@ -75,16 +69,13 @@ defmodule Karaoke.Party do
     GenServer.call(party, {:subscribe, self()})
   end
 
-
   defp broadcast(party, message) do
     for pid <- party.subscribers do
       send(pid, message)
     end
   end
 
-
   # #### Callbacks
-
 
   @impl true
   def init(songs) do
@@ -92,8 +83,9 @@ defmodule Karaoke.Party do
       pid: self(),
       queue: songs,
       subscribers: MapSet.new([]),
-      playing: nil,
+      playing: nil
     }
+
     dbg(self())
     {:ok, party}
   end
@@ -119,16 +111,13 @@ defmodule Karaoke.Party do
     {:reply, new_queue, new_party}
   end
 
-
-
   @impl true
   def handle_call({:add, song}, _from, party) do
     new_queue = List.insert_at(party.queue, -1, song)
     new_party = put_in(party.queue, new_queue)
     broadcast(party, {:updated, new_party})
-    {:reply, new_queue, new_party }
+    {:reply, new_queue, new_party}
   end
-
 
   @impl true
   def handle_call({:delete, song_id}, _from, party) do
@@ -139,50 +128,42 @@ defmodule Karaoke.Party do
     {:reply, new_queue, new_party}
   end
 
-
-
-
   @impl true
   def handle_call({:next}, _from, party) do
-      %{playing: old_song, queue: old_queue} = party
-      case old_queue do
-        [] ->
+    %{playing: old_song, queue: old_queue} = party
 
-          if (old_song == nil) do
-            # no-op, the party was already over
-            {:reply, party, party}
-          else
-            # the party is over now, broadcast update
-            new_party = put_in(party.playing, nil)
-            broadcast(party, {:updated, new_party})
-            {:reply, new_party, new_party}
-          end
-
-        [final_song] ->
-          # the party is almost over, queue now empty
-          new_party = put_in(party.playing, final_song)
-          new_party = put_in(new_party.queue, [])
+    case old_queue do
+      [] ->
+        if old_song == nil do
+          # no-op, the party was already over
+          {:reply, party, party}
+        else
+          # the party is over now, broadcast update
+          new_party = put_in(party.playing, nil)
           broadcast(party, {:updated, new_party})
           {:reply, new_party, new_party}
+        end
 
-        [new_playing | new_queue] ->
-          # move the party along
-          new_party = put_in(party.playing, new_playing)
-          new_party = put_in(new_party.queue, new_queue)
-          broadcast(party, {:updated, new_party})
-          {:reply, new_party, new_party}
+      [final_song] ->
+        # the party is almost over, queue now empty
+        new_party = put_in(party.playing, final_song)
+        new_party = put_in(new_party.queue, [])
+        broadcast(party, {:updated, new_party})
+        {:reply, new_party, new_party}
 
+      [new_playing | new_queue] ->
+        # move the party along
+        new_party = put_in(party.playing, new_playing)
+        new_party = put_in(new_party.queue, new_queue)
+        broadcast(party, {:updated, new_party})
+        {:reply, new_party, new_party}
     end
   end
-
-
-
 
   @impl true
   def handle_call({:list}, _from, party) do
     {:reply, party.queue, party}
   end
-
 
   @impl true
   def handle_call({:subscribe, pid}, _from, party) do
@@ -199,9 +180,4 @@ defmodule Karaoke.Party do
     broadcast(party, {:updated, party})
     {:noreply, party}
   end
-
-
-
-
-
 end

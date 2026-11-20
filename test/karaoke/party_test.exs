@@ -45,7 +45,6 @@ defmodule Karaoke.PartyTest do
       song = party.queue[0]
       update_attrs = %{title: "some updated title", singer: "some updated singer"}
 
-
       assert {:ok, %Song{} = song} = Party.edit_song(party, Enum.into(update_attrs, id: song.id))
       assert song.title == "some updated title"
       assert song.singer == "some updated singer"
@@ -55,7 +54,9 @@ defmodule Karaoke.PartyTest do
       song = song_fixture()
       party = party_fixture([song])
 
-      assert {:error, %Ecto.Changeset{}} = Party.edit_song(party, Enum.into(@invalid_attrs, id: song.id))
+      assert {:error, %Ecto.Changeset{}} =
+               Party.edit_song(party, Enum.into(@invalid_attrs, id: song.id))
+
       # assert [song] == Party.list_songs(party)
     end
 

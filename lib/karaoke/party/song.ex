@@ -3,10 +3,13 @@ defmodule Karaoke.Party.Song do
   import Ecto.Changeset
 
   schema "song" do
-    field :title, :string
-    field :artist, :string
-    field :singer, :string
-    field :position, :integer
+    field(:title, :string)
+    field(:artist, :string)
+    field(:singer, :string)
+    field(:position, :integer)
+    field(:youtube_id, :string)
+    field(:youtube_title, :string)
+    field(:embeddable, :boolean)
 
     timestamps(type: :utc_datetime)
   end
@@ -17,10 +20,9 @@ defmodule Karaoke.Party.Song do
 
   def changeset(song, attrs) do
     song
-    |> cast(attrs, [:title, :singer, :artist])
+    |> cast(attrs, [:title, :singer, :artist, :youtube_id, :youtube_title, :embeddable])
     |> validate_required([:title, :singer])
   end
-
 
   @spec validate(
           :invalid
@@ -28,10 +30,11 @@ defmodule Karaoke.Party.Song do
         ) :: {:ok, Ecto.Changeset.t()}
   def validate(songData) do
     changeset = to_changeset(songData)
-    if (!changeset.valid?) do
+
+    if !changeset.valid? do
       {:error, changeset}
     end
+
     {:ok, changeset}
   end
-
 end

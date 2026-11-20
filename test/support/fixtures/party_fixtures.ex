@@ -20,10 +20,11 @@ defmodule Karaoke.PartyFixtures do
     Party.subscribe(Party)
     party = Party.list_songs(Party)
     dbg(party)
+
     for(song <- songs) do
       Party.add_song(party, song)
     end
+
     Party.list_songs(Party)
   end
-
 end

@@ -1,27 +1,33 @@
 <Layouts.flash_group flash={@flash} />
 <div id="wrapper" class="px-4 py-10 sm:px-6 md:px-8 lg:px-28">
-    <header class="flex items-center justify-between w-full">
-      
-      <h1 class="text-4xl font-bold flex flex-row gap-2">
-        <img src="/images/recurse.svg" class="hidden md:block p-2 w-10"/>
-        Karaoke!
-      </h1>
+  <header class="flex items-center justify-between w-full">
+    <h1 class="text-4xl font-bold flex flex-row gap-2">
+      <img src="/images/recurse.svg" class="hidden md:block p-2 w-10" /> Karaoke!
+    </h1>
 
-      <Layouts.theme_toggle />
+    <Layouts.theme_toggle />
+  </header>
 
-    </header>
+  <main class="py-8 w-max m-auto flex flex-col justify-center items-center gap-4 ">
+    <.button
+      id="start-session"
+      class="btn w-full rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105"
+      href="#"
+    >
+      Start new session
+    </.button>
 
-    <main class="py-8 w-max m-auto flex flex-col justify-center items-center gap-4 ">
-        <.button id="start-session" class="btn w-full rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105" navigate={~p"/sessions/new"}>Start new session</.button>
-
-
-        <.button class="btn w-full h-fit rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105" id="join-session" >Join existing session
-          <.input name="session-code" placeholder="your-session-code" value="" errors={["enter a code"]} />
-        </.button>
-
-          
-    </main>
-
+    <.button
+      class="btn w-full h-fit rounded-box px-6 py-4 text-sm font-semibold leading-6 sm:py-6 bg-base-200 transition hover:bg-base-300 sm:hover:scale-105"
+      id="join-session"
+    >
+      Join existing session
+      <.input
+        name="session-code"
+        placeholder="your-session-code"
+        value=""
+        errors={["enter a code"]}
+      />
+    </.button>
+  </main>
 </div>
-
-  

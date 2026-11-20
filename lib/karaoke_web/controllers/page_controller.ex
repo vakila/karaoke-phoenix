@@ -9,5 +9,4 @@ defmodule KaraokeWeb.PageController do
     render(conn, :session, id: id)
     # text(conn, "This is session #{id}")
   end
-
 end

@@ -65,7 +65,7 @@ defmodule Karaoke.MixProject do
       {:bandit, "~> 1.5"},
       {:ecto, "~> 3.13"},
       {:phoenix_ecto, "~> 4.7"},
-      { :uuid, "~> 1.1" }
+      {:uuid, "~> 1.1"}
     ]
   end
 
