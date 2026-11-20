@@ -159,10 +159,16 @@ defmodule KaraokeWeb.QueuedSongLive do
     <div class="flex items-center justify-center sm:justify-start gap-2 text-sm opacity-70 min-w-0">
       <span :if={@label} class="shrink-0">{@label}</span>
       <%= if Karaoke.YouTube.valid_id?(@song.youtube_id) do %>
-        <img
-          src={"https://i.ytimg.com/vi/#{@song.youtube_id}/mqdefault.jpg"}
-          alt=""
-          class="w-16 aspect-video object-cover rounded shrink-0"
+        <.video_thumbnail_link
+          video={
+            %{
+              id: @song.youtube_id,
+              title: @song.youtube_title || @song.title,
+              thumbnail: "https://i.ytimg.com/vi/#{@song.youtube_id}/mqdefault.jpg"
+            }
+          }
+          class="w-16 aspect-video"
+          icon_class="size-5"
         />
         <span class="truncate">{@song.youtube_title || "YouTube video"}</span>
       <% else %>

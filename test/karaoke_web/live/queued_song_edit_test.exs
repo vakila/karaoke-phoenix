@@ -56,6 +56,12 @@ defmodule KaraokeWeb.QueuedSongEditTest do
     assert view
            |> element("#editing-queued-#{song.id}")
            |> render() =~ "Queen - Bohemian Rhapsody (Karaoke)"
+
+    # and its thumbnail opens the video on YouTube
+    assert has_element?(
+             view,
+             "#editing-queued-#{song.id} a[href='https://www.youtube.com/watch?v=#{@video_id}'][target='_blank']"
+           )
   end
 
   test "changing only the singer saves and keeps the video", %{conn: conn, song: song} do

@@ -403,6 +403,8 @@ defmodule KaraokeWeb.CoreComponents do
   on YouTube in a new tab, so people can check it before picking it.
   """
   attr :video, :map, required: true, doc: "a search result with `:id`, `:title`, `:thumbnail`"
+  attr :class, :string, default: "w-24 h-16", doc: "size of the thumbnail"
+  attr :icon_class, :string, default: "size-8", doc: "size of the hover play icon"
 
   def video_thumbnail_link(assigns) do
     ~H"""
@@ -411,7 +413,10 @@ defmodule KaraokeWeb.CoreComponents do
       target="_blank"
       rel="noopener noreferrer"
       title={"Watch on YouTube: " <> @video.title}
-      class="group relative block w-24 h-16 shrink-0 overflow-hidden rounded focus-visible:outline-2 focus-visible:outline-white"
+      class={[
+        "group relative block shrink-0 overflow-hidden rounded focus-visible:outline-2 focus-visible:outline-white",
+        @class
+      ]}
     >
       <img
         src={@video.thumbnail}
@@ -419,7 +424,7 @@ defmodule KaraokeWeb.CoreComponents do
         class="w-full h-full object-cover transition duration-200 group-hover:scale-105 group-hover:brightness-50 group-focus-visible:brightness-50"
       />
       <span class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-        <.icon name="hero-play-solid" class="size-8 text-white" />
+        <.icon name="hero-play-solid" class={"text-white " <> @icon_class} />
       </span>
     </a>
     """
