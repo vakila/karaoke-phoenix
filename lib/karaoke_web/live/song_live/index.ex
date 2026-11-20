@@ -48,7 +48,7 @@ defmodule KaraokeWeb.SongLive.Index do
 
           <div :if={embed?(@playing)} class="aspect-video w-full mt-4">
             <iframe
-              src={"https://www.youtube.com/embed/#{@playing.youtube_id}?autoplay=1&rel=0"}
+              src={"https://www.youtube.com/embed/#{@playing.youtube_id}?rel=0"}
               title={@playing.youtube_title || @playing.title}
               class="w-full h-full rounded"
               frameborder="0"
