@@ -118,11 +118,18 @@ defmodule Karaoke.Party do
 
   @impl true
   def handle_call({:edit, song}, _from, party) do
-    song_index = get_song_index(party.queue, song.id)
-    new_queue = List.replace_at(party.queue, song_index, song)
-    new_party = put_in(party.queue, new_queue)
-    broadcast(party, {:updated, new_party})
-    {:reply, new_queue, new_party}
+    case get_song_index(party.queue, song.id) do
+      nil ->
+        # the song left the queue (played or deleted) while being edited;
+        # ignore the edit rather than crashing and losing the whole party
+        {:reply, party.queue, party}
+
+      song_index ->
+        new_queue = List.replace_at(party.queue, song_index, song)
+        new_party = put_in(party.queue, new_queue)
+        broadcast(party, {:updated, new_party})
+        {:reply, new_queue, new_party}
+    end
   end
 
   @impl true
@@ -135,11 +142,17 @@ defmodule Karaoke.Party do
 
   @impl true
   def handle_call({:delete, song_id}, _from, party) do
-    song_index = get_song_index(party.queue, song_id)
-    {_song, new_queue} = List.pop_at(party.queue, song_index)
-    new_party = put_in(party.queue, new_queue)
-    broadcast(party, {:updated, new_party})
-    {:reply, new_queue, new_party}
+    case get_song_index(party.queue, song_id) do
+      nil ->
+        # already gone (e.g. two people hit delete); nothing to do
+        {:reply, party.queue, party}
+
+      song_index ->
+        {_song, new_queue} = List.pop_at(party.queue, song_index)
+        new_party = put_in(party.queue, new_queue)
+        broadcast(party, {:updated, new_party})
+        {:reply, new_queue, new_party}
+    end
   end
 
   @impl true

@@ -113,7 +113,6 @@ defmodule KaraokeWeb.SongLive.Index do
           module={QueuedSongLive}
           id={song.id}
           song={song}
-          editing={false}
         />
       </fieldset>
 
@@ -154,7 +153,7 @@ defmodule KaraokeWeb.SongLive.Index do
 
         <div :if={@search_results != []} class="space-y-2 py-2">
           <div :for={video <- @search_results} class="flex items-center gap-3 border rounded p-2">
-            <img src={video.thumbnail} alt="" class="w-24 h-16 object-cover rounded shrink-0" />
+            <.video_thumbnail_link video={video} />
             <div class="flex-1 min-w-0">
               <p class="font-semibold truncate">{video.title}</p>
               <p :if={video.channel} class="text-sm opacity-70 truncate">{video.channel}</p>
